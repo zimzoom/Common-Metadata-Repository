@@ -142,7 +142,7 @@
 ;;       particular ACL settings provided by the HTTP request context.
 (defjob StaticContentGeneratorJob
   [_job-context system]
-  (generate-content {:system system :execution-context :cli}))
+  (generate-content {:system system}))
 
 (def static-content-generator-job
   "The job definition used by the system job scheduler."
