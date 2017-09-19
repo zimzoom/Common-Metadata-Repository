@@ -9,8 +9,7 @@
    [cmr.search.site.data :as data]
    [cmr.search.site.static.directory :as directory]
    [cmr.search.site.static.site :as site]
-   [cmr.search.site.util :as util]
-   [cmr.transmit.config :as transmit])
+   [cmr.search.site.util :as util])
   (:gen-class))
 
 ;; Contextual data that is used for static content in the absense of a system
