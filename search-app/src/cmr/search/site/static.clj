@@ -69,6 +69,7 @@
   $ lein run -m cmr.search.site.static prep
   $ lein run -m cmr.search.site.static api
   $ lein run -m cmr.search.site.static site
+  $ lein run -m cmr.search.site.static static-site
   $ lein run -m cmr.search.site.static all"
   [doc-type]
   (case (keyword doc-type)
@@ -79,5 +80,4 @@
     :all (do
            (-main :prep)
            (-main :api)
-           (-main :site)
-           (-main :static-site))))
+           (-main :site))))
