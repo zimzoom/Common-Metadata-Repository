@@ -27,7 +27,7 @@
   {:default 0
    :type Long})
 
-(defconfig generation-interval
+(defconfig static-content-generation-interval
   "Number of seconds between `static-content-generator-job` runs."
   {:default (* 60 60 24)
    :type Long})
@@ -147,5 +147,5 @@
 (def static-content-generator-job
   "The job definition used by the system job scheduler."
   {:job-type StaticContentGeneratorJob
-   :interval (generation-interval)
+   :interval (static-content-generation-interval)
    :start-delay (+ (default-job-start-delay) (static-content-generation-job-delay))})
