@@ -49,6 +49,8 @@
       (timeout/thunk-timeout #(try-to-publish queue-broker exchange-name msg)
                              (config/publish-queue-timeout-ms))
       (catch java.util.concurrent.TimeoutException e
+        ;; May be a systemic problem causing the timeout. Reinitialize the queue-broker connection.
+        (queue-protocol/reconnect queue-broker)
         (errors/throw-service-error
           :service-unavailable
           (str "Request timed out when attempting to publish message: " msg)

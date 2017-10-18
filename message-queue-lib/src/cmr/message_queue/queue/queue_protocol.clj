@@ -29,6 +29,11 @@
     [this]
     "Reset the broker, deleting any queues and any queued messages")
 
+  (reconnect
+    [this]
+    "Reinitiates the connection to the underlying queues and exchanges. Used when there appears to
+    be a systemic problem reaching the queues or exchanges.")
+
   (health
     [this]
     "Checks to see if the queue is up and functioning properly. Returns a map with the

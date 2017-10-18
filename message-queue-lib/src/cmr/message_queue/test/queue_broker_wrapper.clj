@@ -258,6 +258,10 @@
       (finally
         (reset! resetting?-atom false))))
 
+  (reconnect
+    [this]
+    this)
+
   (health
     [this]
     (queue-protocol/health queue-broker)))

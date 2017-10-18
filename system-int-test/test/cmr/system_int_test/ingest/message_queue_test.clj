@@ -1,6 +1,6 @@
 (ns cmr.system-int-test.ingest.message-queue-test
   "Tests behavior of ingest and indexer under different message queue failure scenarios."
-  (:require 
+  (:require
     [clojure.test :refer :all]
     [cmr.indexer.config :as indexer-config]
     [cmr.message-queue.test.queue-broker-side-api :as qb-side-api]
@@ -172,7 +172,7 @@
    (s/only-with-real-message-queue
      (testing "When unable to publish a message on the queue the ingest fails."
        (testing "Update concept"
-         (index-util/set-message-queue-publish-timeout 0)
+         (qb-side-api/set-message-queue-publish-timeout 0)
          (let [collection (d/ingest-umm-spec-collection "PROV1" (data-umm-c/collection) {:allow-failure? true})]
           ;; Verify ingest received a failed status code
            (is (= 503 (:status collection)))
@@ -181,9 +181,9 @@
            (is (nil? (index-util/get-concept-message-queue-history (indexer-config/index-queue-name))))))
 
        (testing "Delete concept"
-         (index-util/set-message-queue-publish-timeout 10000)
+         (qb-side-api/set-message-queue-publish-timeout 10000)
          (let [collection (d/ingest-umm-spec-collection "PROV1" (data-umm-c/collection))
-               _ (index-util/set-message-queue-publish-timeout 0)
+               _ (qb-side-api/set-message-queue-publish-timeout 0)
                response (ingest/delete-concept (d/item->concept collection))]
           ;; Verify ingest received a failed status code
            (is (= 503 (:status response)))
@@ -288,6 +288,3 @@
   (cmr.demos.helpers/curl "http://localhost:3003/collections.xml?page_size=0"))
 
   ;; At the end of the tests make sure to return behavior to normal by running reset
-
-
-

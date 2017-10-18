@@ -242,7 +242,7 @@
   lifecycle/Lifecycle
 
   (start
-    [this system]
+    [this _]
     (info "Starting RabbitMQ connection")
     (let [conn (rmq/connect {:host host :port port :username username :password password})
           this (assoc this :conn conn)]
@@ -259,7 +259,7 @@
       this))
 
   (stop
-    [this system]
+    [this _]
     ;; Close the connection. This will close all channels as well.
     (when (:conn this) (rmq/close (:conn this)))
     (assoc this :conn nil))
@@ -291,6 +291,10 @@
     (info "Resetting RabbitMQ")
     (doseq [queue-name persistent-queues]
       (purge-queue this queue-name)))
+
+  (reconnect
+    [this]
+    this)
 
   (health
     [this]

@@ -390,7 +390,7 @@
   lifecycle/Lifecycle
 
   (start
-    [this system]
+    [this _]
     (let [sqs-client (create-aws-client :sqs)
           sns-client (create-aws-client :sns)
           normalized-queue-names (reduce (fn [m queue-name]
@@ -414,7 +414,7 @@
              :normalized-queue-names normalized-queue-names)))
 
   (stop
-    [this system]
+    [this _]
     (.shutdown sns-client)
     (.shutdown sqs-client)
     this)
@@ -469,6 +469,16 @@
                     dlq-purge-req (PurgeQueueRequest. dlq-url)]]
         (.purgeQueue sqs-client q-purge-req)
         (.purgeQueue sqs-client dlq-purge-req))))
+
+  (reconnect
+    [this]
+    (info "Reconnecting to SQS and SNS.")
+    (try
+      (lifecycle/stop this nil)
+      (catch Exception e
+        (warn e "Failed to properly stop in call to reconnect.")))
+    (lifecycle/start this nil)
+    this)
 
   (health
     [this]
