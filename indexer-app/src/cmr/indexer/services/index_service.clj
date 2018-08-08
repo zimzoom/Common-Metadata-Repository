@@ -357,15 +357,27 @@
             delete-time (get-in parsed-concept [:data-provider-timestamps :delete-time])]
         (when (or (nil? delete-time) (t/after? delete-time (tk/now)))
           (let [tag-associations (get-tag-associations context concept)
+                _ (info (format "getting variable association %s, revision-id %s, all-revisions-index? %s"
+                              concept-id revision-id all-revisions-index?))
                 variable-associations (get-variable-associations context concept)
+                _ (info (format "Done getting variable association %s, revision-id %s, all-revisions-index? %s"
+                              concept-id revision-id all-revisions-index?))
                 service-associations (get-service-associations context concept)
+                _ (info (format "getting elastic version with associations %s, revision-id %s, all-revisions-index? %s"
+                              concept-id revision-id all-revisions-index?))
                 elastic-version (get-elastic-version-with-associations
                                  context concept tag-associations variable-associations
                                  service-associations)
+                _ (info (format "Done getting elastic version with associations %s, revision-id %s, all-revisions-index? %s"
+                              concept-id revision-id all-revisions-index?))
                 tag-associations (es/parse-non-tombstone-associations
                                   context tag-associations)
+                _ (info (format "parsing variable associations %s, revision-id %s, all-revisions-index? %s"
+                              concept-id revision-id all-revisions-index?))
                 variable-associations (es/parse-non-tombstone-associations
                                        context variable-associations)
+                _ (info (format "Done parsing variable associations %s, revision-id %s, all-revisions-index? %s"
+                              concept-id revision-id all-revisions-index?))
                 service-associations (es/parse-non-tombstone-associations
                                       context service-associations)
                 concept-indexes (idx-set/get-concept-index-names context concept-id revision-id
@@ -381,6 +393,8 @@
                                     (select-keys [:all-revisions-index? :ignore-conflict?])
                                     (assoc :ttl (when delete-time
                                                   (t/in-millis (t/interval (tk/now) delete-time)))))]
+            (info (format "about to save concept in elasticsearch %s, revision-id %s, all-revisions-index? %s"
+                          concept-id revision-id all-revisions-index?))
             (es/save-document-in-elastic
              context
              concept-indexes
