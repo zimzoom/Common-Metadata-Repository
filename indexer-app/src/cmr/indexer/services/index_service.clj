@@ -405,7 +405,9 @@
              concept-id
              revision-id
              elastic-version
-             elastic-options)))))))
+             elastic-options)
+            (info (format "Done save concept in elasticsearch %s, revision-id %s, all-revisions-index? %s"
+                          concept-id revision-id all-revisions-index?))))))))
 
 (defn- index-associated-collection
   "Index the associated collection concept of the given concept. This is used by indexing
