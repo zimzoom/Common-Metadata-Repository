@@ -13,7 +13,7 @@
    [cmr.common.mime-types :as mt]
    [cmr.common.services.errors :as errors]
    [cmr.common.time-keeper :as tk]
-   [cmr.common.util :as util]
+   [cmr.common.util :as util :refer [defn-timed]]
    [cmr.elastic-utils.index-util :as index-util]
    [cmr.indexer.config :as indexer-config]
    [cmr.indexer.data.collection-granule-aggregation-cache :as cgac]
@@ -157,7 +157,7 @@
                             {:variables (mapv :variable-concept-id variable-associations)
                              :services (mapv :service-concept-id service-associations)})))))
 
-(defn- get-elastic-doc-for-full-collection
+(defn-timed get-elastic-doc-for-full-collection
   "Get all the fields for a normal collection index operation."
   [context concept collection]
   (let [{:keys [concept-id revision-id provider-id user-id native-id

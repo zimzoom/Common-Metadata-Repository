@@ -8,7 +8,7 @@
             [cmr.common.services.errors :as errors]
             [cmr.common.concepts :as cs]
             [cmr.common.mime-types :as mt]
-            [cmr.common.util :as util]
+            [cmr.common.util :as util :refer [defn-timed]]
             [cmr.elastic-utils.connect :as es]
             [cmr.elastic-utils.index-util :as esi]
             [cmr.transmit.index-set :as index-set]
@@ -172,7 +172,7 @@
   [config]
   (->ESstore config nil))
 
-(defn- try-elastic-operation
+(defn-timed try-elastic-operation
   "Attempt to perform the operation in Elasticsearch, handles exceptions.
   f is the operation function to Call
   conn is the elastisch connection

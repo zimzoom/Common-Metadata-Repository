@@ -384,6 +384,8 @@
                               concept-id revision-id all-revisions-index?))
                 concept-indexes (idx-set/get-concept-index-names context concept-id revision-id
                                                                  options concept)
+                _ (info (format "Got concept indexes for %s, revision-id %s, all-revisions-index? %s"
+                              concept-id revision-id all-revisions-index?))
                 es-doc (es/parsed-concept->elastic-doc
                         context
                         (-> concept
@@ -397,6 +399,7 @@
                                                   (t/in-millis (t/interval (tk/now) delete-time)))))]
             (info (format "about to save concept in elasticsearch %s, revision-id %s, all-revisions-index? %s"
                           concept-id revision-id all-revisions-index?))
+            (info "elastic doc:" es-doc)
             (es/save-document-in-elastic
              context
              concept-indexes
