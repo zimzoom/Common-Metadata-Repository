@@ -400,6 +400,8 @@
             (info (format "about to save concept in elasticsearch %s, revision-id %s, all-revisions-index? %s"
                           concept-id revision-id all-revisions-index?))
             (info "elastic doc:" es-doc)
+            (info (format "Start saving concept in elasticsearch %s, revision-id %s, all-revisions-index? %s"
+                          concept-id revision-id all-revisions-index?))
             (es/save-document-in-elastic
              context
              concept-indexes
