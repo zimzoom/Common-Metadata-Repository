@@ -9,7 +9,6 @@
             [clojure.java.io :as io]
             [cmr.common.util :refer [are3]]
             [cmr.common.xml :as xml]
-            [cmr.common.xml.xslt :as xslt]
             [cmr.umm-spec.util :as u]
             [cmr.umm-spec.umm-spec-core :as core]
             [cmr.umm-spec.test.location-keywords-helper :as lkt]))
