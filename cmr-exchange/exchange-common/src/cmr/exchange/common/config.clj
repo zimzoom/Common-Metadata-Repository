@@ -59,7 +59,7 @@
        (map normalize-prop)
        (remove nil?)
        (reduce nest-vars {})
-       ((fn [x] (log/trace "props-data:" x) x))))
+       ((fn [x] (log/debug "props-data:" x) x))))
 
 (defn env-data
   []
@@ -67,7 +67,7 @@
        (map normalize-env)
        (remove nil?)
        (reduce nest-vars {})
-       ((fn [x] (log/trace "env-data:" x) x))))
+       ((fn [x] (log/debug "env-data:" x) x))))
 
 (defn data
   ([]

@@ -23,7 +23,7 @@
   :dependencies [[clojusc/trifl "0.4.0"]
                  [clojusc/twig "0.4.0"]
                  [com.stuartsierra/component "0.3.2"]
-                 [gov.nasa.earthdata/cmr-exchange-common "0.2.0-SNAPSHOT"]
+                 [gov.nasa.earthdata/cmr-exchange-common "0.3.1-SNAPSHOT"]
                  [gov.nasa.earthdata/cmr-http-kit "0.1.3-SNAPSHOT"]
                  [metosin/reitit-ring "0.2.4"]
                  [org.clojure/clojure "1.9.0"]]
