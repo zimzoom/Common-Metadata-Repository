@@ -314,6 +314,8 @@
   ([context docs {:keys [all-revisions-index?]}]
    (doseq [docs-batch (partition-all MAX_BULK_OPERATIONS_PER_REQUEST docs)]
      (let [bulk-operations (cmr-bulk/create-bulk-index-operations docs-batch all-revisions-index?)
+           _ (doseq [op bulk-operations] 
+               (info "Reindexing bulk-index-documents bulk-operation: " op))
            conn (context->conn context)
            response (bulk/bulk conn bulk-operations)]
       (handle-bulk-index-response response)))))
