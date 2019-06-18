@@ -296,9 +296,7 @@
                                (let [status (if (:index item)
                                                 (get-in item [:index :status])
                                                 (get-in item [:delete :status]))]
-                                 (and (> status 399)
-                                      (not= 409 status)
-                                      (not= 404 status))))
+                                 (> status 399)))
                            (:items response))]
     (doseq [resp bad-items
             :let [resp-data (if (:index resp)
