@@ -129,6 +129,7 @@
               (info "Reindexing concept-id/revision-id: " cptinfo)))
      (doseq [doc (prepare-batch context batch options)]
        (info "Reindexing doc id/has-temporal-subsetting is: " (str (:_id doc) "/" (:has-temporal-subsetting doc)))))
+   (info "Finished printing docs in bulk-index")   
    (reduce (fn [num-indexed batch]
              (let [batch (prepare-batch context batch options)]
                (es/bulk-index-documents context batch options)
@@ -217,7 +218,8 @@
                                          REINDEX_BATCH_SIZE
                                          {:provider-id provider-id :latest true})]
          (bulk-index context latest-collection-batches {:all-revisions-index? false
-                                                        :force-version? force-version?})))
+                                                        :force-version? force-version?}))
+       (info "Finished reindexing latest collections for provider" provider-id))
 
      (when (or (nil? all-revisions-index?) all-revisions-index?)
        ;; Note that this will not unindex revisions that were removed directly from the database.
@@ -229,7 +231,8 @@
                                      REINDEX_BATCH_SIZE
                                      {:provider-id provider-id})]
          (bulk-index context all-revisions-batches {:all-revisions-index? true
-                                                    :force-version? force-version?}))))))
+                                                    :force-version? force-version?}))
+        (info "Finished reindexing all collection revisions for provider" provider-id)))))
 
 (defn reindex-tags
   "Reindexes all the tags. Only the latest revisions will be indexed"
