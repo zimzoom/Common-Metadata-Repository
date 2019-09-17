@@ -2,6 +2,7 @@
   "Defines the HTTP URL routes that deal with concepts."
   (:require
    [cheshire.core :as json]
+   [clojure.pprint :refer (pprint)]
    [clojure.string :as str]
    [cmr.common.log :refer (debug info warn error)]
    [cmr.common.services.errors :as errors]
@@ -39,9 +40,12 @@
   "Get concepts using concept-id/revision-id tuples."
   [context params concept-id-revisions]
   (let [concepts (concept-service/get-concepts context concept-id-revisions (allow-missing? params))]
-    {:status 200
-     :body (json/generate-string concepts)
-     :headers rh/json-header}))
+   (do
+    (debug "CONCEPTS:")
+    (debug (with-out-str (pprint concepts)))
+    {:status 200}
+    :body (json/generate-string concepts)
+    :headers rh/json-header)))    
 
 (defn- get-latest-concepts
   "Get latest version of concepts using a list of concept-ids"
