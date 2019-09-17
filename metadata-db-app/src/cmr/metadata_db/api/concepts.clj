@@ -43,9 +43,9 @@
    (do
     (debug "CONCEPTS:")
     (debug (with-out-str (pprint concepts)))
-    {:status 200}
-    :body (json/generate-string concepts)
-    :headers rh/json-header)))    
+    {:status 200
+     :body (json/generate-string concepts)
+     :headers rh/json-header})))  
 
 (defn- get-latest-concepts
   "Get latest version of concepts using a list of concept-ids"
