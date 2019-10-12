@@ -22,8 +22,7 @@
   running system, the request context will be in place and a null value will
   be returned when applying the `:cmr-application` key."
   [context]
-  (transmit/application-public-root-url
-    (or (:cmr-application context) context)))
+  (transmit/application-public-root-url context))
 
 (defn get-search-reference-file
   "Locate a reference file whose location is well-known and stable (won't
