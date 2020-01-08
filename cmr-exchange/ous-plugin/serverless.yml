@@ -1,0 +1,41 @@
+service: cmr-ous
+
+provider:
+  name: aws
+  runtime: java8
+  region: us-east-1
+  role: IamRoleCustomResourcesLambdaExecution
+  deploymentBucket: ${cf:${opt:stage}.cmrServerlessDeploymentBucket}
+  vpc:
+    securityGroupIds:
+      - ${cf:${opt:stage}.servicesSecurityGroupId}
+    subnetIds: !Split [ ",", "${cf:${opt:stage}.subnetIds}" ]
+
+package:
+  artifact: target/cmr-ous-plugin-*.jar
+
+plugins:
+  - serverless-plugin-warmup
+  - serverless-offline
+
+functions: ${file(./serverless-configs/${self:provider.name}-functions.yml)}
+
+resources:
+  Resources:
+    IamRoleCustomResourcesLambdaExecution:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: cmrOusRole-${opt:stage}
+        PermissionsBoundary: arn:aws:iam::#{AWS::AccountId}:policy/NGAPShRoleBoundary
+        ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            -
+              Effect: "Allow"
+              Principal:
+                Service:
+                  - "lambda.amazonaws.com"
+              Action:
+                - "sts:AssumeRole"

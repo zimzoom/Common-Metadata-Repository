@@ -8,5 +8,4 @@ env:
   - LEIN_SNAPSHOTS_IN_RELEASE=true
 notifications:
   email:
-    - duncan.mcgreggor@nasa.gov
-
+    - mark.h.schmele@nasa.gov
