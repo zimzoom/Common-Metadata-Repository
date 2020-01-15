@@ -1,5 +1,7 @@
 (ns cmr.http.kit.request
   (:require
+   [clojure.java.io :as io]
+   [clojure.string :as string]
    [org.httpkit.client :as httpc]
    [taoensso.timbre :as log])
   (:refer-clojure :exclude [get]))
@@ -136,3 +138,23 @@
    :+content-type
    :content-type
    :no-vendor-content-type])
+
+(defn api-gateway-request->ring-request
+  "coerce an API gateway request to a valid Ring request"
+  [request]
+  {:server-port (-> (:headers request) :X-Forwarded-Port Integer/parseInt)
+    :server-name (:Host (:headers request))
+    :remote-addr (-> (:headers request)
+                    :X-Forwarded-For
+                    (string/split #", ")
+                    first)
+    :uri (:path request)
+    :scheme (-> (:headers request) :X-Forwarded-Proto keyword)
+    :protocol (:protocol (:requestContext request))
+    :headers (into {} (for [[k v] (:headers request)]
+                        [(string/lower-case (name k)) v]))
+    :request-method (-> (:httpMethod request)
+                        (string/lower-case)
+                        (keyword))
+    :body (when-let [body (:body request)] (io/input-stream (.getBytes body)))
+    :query-string (:queryStringParameters request)})

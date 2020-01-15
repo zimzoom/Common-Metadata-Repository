@@ -185,6 +185,13 @@
 (def json-handler #(client-handler % error-handler parse-json-body))
 (def xml-handler #(client-handler % error-handler parse-xml-body))
 
+(defn ring-response->api-gateway-response
+  "coerce a Ring response to an API gateway response"
+  [response]
+    {:statusCode (str (:status response))
+     :body (:body response)
+     :headers (:headers response)})
+
 (defn process-ok-results
   [data]
   {:headers {"CMR-Took" (:took data)

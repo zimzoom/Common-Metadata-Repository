@@ -44,7 +44,8 @@
   (log/debug "Generating URLs based on HTTP GET ...")
   (->> req
        :params
-       (generate component req user-token concept-id)))
+       (generate component req user-token concept-id)
+       (response/ring-response->api-gateway-response)))
 
 (defn- generate-via-post
   "Private function for creating OPeNDAP URLs when supplied with an HTTP
@@ -54,7 +55,8 @@
        :body
        (slurp)
        (#(json/parse-string % true))
-       (generate component req user-token concept-id)))
+       (generate component req user-token concept-id)
+       (response/ring-response->api-gateway-response)))
 
 (defn unsupported-method
   "XXX"
@@ -67,7 +69,8 @@
   (fn [req]
     (log/debug "Method-dispatching for URLs generation ...")
     (log/trace "request:" req)
-    (let [user-token (token/extract req)
+    (let [req (request/api-gateway-request->ring-request req)
+          user-token (token/extract req)
           concept-id (get-in req [:path-params :concept-id])]
       (case (:request-method req)
         :get (generate-via-get component req user-token concept-id)
