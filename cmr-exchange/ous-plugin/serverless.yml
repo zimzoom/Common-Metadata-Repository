@@ -14,10 +14,6 @@ provider:
 package:
   artifact: target/cmr-ous-plugin-*.jar
 
-plugins:
-  - serverless-plugin-warmup
-  - serverless-offline
-
 functions: ${file(./serverless-configs/${self:provider.name}-functions.yml)}
 
 resources:

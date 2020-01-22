@@ -4,110 +4,57 @@
 ousBatchGenerate:
   handler: cmr.ous.app.handler.collection.batch_generate
   timeout: ${env:LAMBDA_TIMEOUT}
-  warmup:
-    concurrency: ${env:WARM_LAMBDA_COUNT}
   events:
-    - http:
-        method: post
-        path: service-bridge/ous/collection
+    - alb:
+        listenerArn: ${cf:${opt:stage}.servicesLbListenerArn}
+        priority: 70
+        conditions:
+          path: service-bridge/ous/collection
 
 ousGenerateUrls:
   handler: cmr.ous.app.handler.collection.generate_urls
   timeout: ${env:LAMBDA_TIMEOUT}
-  warmup:
-    concurrency: ${env:WARM_LAMBDA_COUNT}
   events:
-    - http:
-        method: get
-        path: service-bridge/ous/collection/{concept-id}
-    - http:
-        method: post
-        path: service-bridge/ous/collection/{concept-id}
+    - alb:
+        listenerArn: ${cf:${opt:stage}.servicesLbListenerArn}
+        priority: 71
+        conditions:
+          path: service-bridge/ous/collection/{concept-id}
+    - alb:
+        listenerArn: ${cf:${opt:stage}.servicesLbListenerArn}
+        priority: 72
+        conditions:
+          path: service-bridge/ous/collection/{concept-id}
 
 ousStreamCollectionUrls:
   handler: cmr.ous.app.handler.collection.stream_urls
   timeout: ${env:LAMBDA_TIMEOUT}
-  warmup:
-    concurrency: ${env:WARM_LAMBDA_COUNT}
   events:
-    - http:
-        method: get
-        path: /service-bridge/ous/streaming-collection/{concept-id}
+    - abl:
+        listenerArn: ${cf:${opt:stage}.servicesLbListenerArn}
+        priority: 73
+        conditions:
+          path: /service-bridge/ous/streaming-collection/{concept-id}
 
 health:
   handler: cmr.opendap.app.handler.core.health
   timeout: ${env:LAMBDA_TIMEOUT}
-  warmup:
-    concurrency: ${env:WARM_LAMBDA_COUNT}
   events:
-    - http:
-        method: get
-        path: /service-bridge/health
+    - alb:
+        listenerArn: ${cf:${opt:stage}.servicesLbListenerArn}
+        priority: 74
+        conditions:
+          path: /service-bridge/health
 
 healthOptions:
   handler: cmr.http.kit.app.handler.ok
   timeout: ${env:LAMBDA_TIMEOUT}
-  warmup:
-    concurrency: ${env:WARM_LAMBDA_COUNT}
   events:
-    - http:
-        method: options
-        path: /service-bridge/health
-
-#
-# Administration Endpoints
-#
-lookup:
-  handler: cmr.ous.app.handler.auth_cache.lookup
-  timeout: ${env:LAMBDA_TIMEOUT}
-  warmup:
-    concurrency: ${env:WARM_LAMBDA_COUNT}
-  events:
-    - http:
-        method: get
-        path: /service-bridge/cache/auth/{item-key}
-    - http:
-        method: get
-        path: /service-bridge/cache/concept/{item-key}
-
-lookupAll:
-  handler: cmr.ous.app.handler.auth_cache.lookup_all
-  timeout: ${env:LAMBDA_TIMEOUT}
-  warmup:
-    concurrency: ${env:WARM_LAMBDA_COUNT}
-  events:
-    - http:
-        method: get
-        path: /service-bridge/cache/auth
-    - http:
-        method: get
-        path: /service-bridge/cache/concept
-
-evict:
-  handler: cmr.ous.app.handler.auth_cache.evict
-  timeout: ${env:LAMBDA_TIMEOUT}
-  warmup:
-    concurrency: ${env:WARM_LAMBDA_COUNT}
-  events:
-    - http:
-        method: delete
-        path: /service-bridge/cache/auth/{item-key}
-    - http:
-        method: delete
-        path: /service-bridge/cache/concept/{item-key}
-
-evictAll:
-  handler: cmr.ous.app.handler.auth_cache.evict_all
-  timeout: ${env:LAMBDA_TIMEOUT}
-  warmup:
-    concurrency: ${env:WARM_LAMBDA_COUNT}
-  events:
-    - http:
-        method: delete
-        path: /service-bridge/cache/auth
-    - http:
-        method: delete
-        path: /service-bridge/cache/concept
+    - alb:
+        listenerArn: ${cf:${opt:stage}.servicesLbListenerArn}
+        priority: 75
+        conditions:
+          path: /service-bridge/health
 
 #
 # Documentation Endpoints
@@ -115,22 +62,24 @@ evictAll:
 serivceBridgeDocs:
   handler: cmr.http.kit.app.handler.dynamic_page
   timeout: ${env:LAMBDA_TIMEOUT}
-  warmup:
-    concurrency: ${env:WARM_LAMBDA_COUNT}
   events:
-    - http:
-        method: get
-        path: /service-bridge/docs
-    - http:
-        method: get
-        path: /service-bridge
+    - alb:
+        listenerArn: ${cf:${opt:stage}.servicesLbListenerArn}
+        priority: 76
+        conditions:
+          path: /service-bridge/docs
+    - alb:
+        listenerArn: ${cf:${opt:stage}.servicesLbListenerArn}
+        priority: 77
+        conditions:
+          path: /service-bridge
 
 serviceBridgeRobots:
   handler: cmr.http.kit.app.handler.permanent_redirect
   timeout: ${env:LAMBDA_TIMEOUT}
-  warmup:
-    concurrency: ${env:WARM_LAMBDA_COUNT}
   events:
-    - http:
-        method: get
-        path: /service-bridge/robots.txt
+    - alb:
+        listenerArn: ${cf:${opt:stage}.servicesLbListenerArn}
+        priority: 78
+        conditions:
+          path: /service-bridge/robots.txt
