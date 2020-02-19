@@ -52,14 +52,14 @@
   {:short-name 1.4
    :entry-id 1.4
    :project 1.0
-   :platform 1.3
-   :instrument 1.2
+   :platform 1.5
+   :instrument 1.5
    :science-keywords 1.2
    :spatial-keyword 1.1
    :temporal-keyword 1.1
    :version-id 1.0
-   :entry-title 2.2 
-   :provider 1.0
+   :entry-title 1.2
+   :provider 1.5
    :two-d-coord-name 1.0
    :processing-level-id 1.0
    :data-center 1.0})
