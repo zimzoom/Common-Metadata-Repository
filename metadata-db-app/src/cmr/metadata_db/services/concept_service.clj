@@ -299,7 +299,8 @@
   concept if successful, otherwise throws an exception."
   [db provider concept]
   {:pre [(:revision-id concept)]}
-  (let [result (c/save-concept db provider concept)
+  (let [start-time (System/currentTimeMillis)
+        result (c/save-concept db provider concept)
         ;; When there are constraint violations we send in a rollback function to delete the
         ;; concept that had just been saved and then throw an error.
         rollback-fn #(c/force-delete db
@@ -307,6 +308,8 @@
                                      provider
                                      (:concept-id concept)
                                      (:revision-id concept))]
+    (info (format "Save concept %s took [%d] ms"
+                  (:concept-id concept) (- (System/currentTimeMillis) start-time)))
     (if (nil? (:error result))
       (do
         ;; Perform post commit constraint checks - don't perform check if deleting concepts
@@ -642,7 +645,8 @@
   (trace "concept:" (keys concept))
   (trace "provider id:" (:provider-id concept))
   (cv/validate-concept concept)
-  (let [db (util/context->db context)
+  (let [start (System/currentTimeMillis)
+        db (util/context->db context)
         provider-id (or (:provider-id concept)
                         (when (contains? system-level-concept-types (:concept-type concept)) "CMR"))
         ;; Need this for tags/tag-associations since they don't have a provider-id in their
@@ -661,11 +665,14 @@
       (let [previous-concept (c/get-concept db concept-type provider concept-id)]
         (validate-variable-name-not-changed concept previous-concept)))
 
-    (let [concept (->> concept
+    (let [pre-save-time (System/currentTimeMillis)
+          _ (info (format "save-concept-revision pre-save took [%d] ms" (- pre-save-time start)))
+          concept (->> concept
                        (set-or-generate-revision-id db provider)
                        (set-deleted-flag false)
                        (try-to-save db provider))
           revision-id (:revision-id concept)]
+      (info (format "save-concept-revision save took [%d] ms" (- (System/currentTimeMillis) pre-save-time)))
       ;; publish tombstone delete event if the previous concept revision is a granule tombstone
       (when (and (= :granule concept-type)
                  (> revision-id 1))
