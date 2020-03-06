@@ -235,13 +235,13 @@
       ;; Get all the other variables sharing the same name; not deleted
       ;; and are associated with the same collection.
       (let [stmt [(format "select va.variable_concept_id
-                           from   cmr_variable_associations va, 
+                           from   cmr_variable_associations va,
                                   (select concept_id, max(revision_id) maxrev
                                    from cmr_variable_associations group by concept_id) latestva,
                                   cmr_variables v
                            where  va.revision_id = latestva.maxrev
                            and    va.concept_id = latestva.concept_id
-                           and    va.deleted = 0 
+                           and    va.deleted = 0
                            and    va.variable_concept_id = v.concept_id
                            and    va.variable_concept_id != '%s'
                            and    va.associated_concept_id = '%s'
@@ -426,7 +426,8 @@
        ;; There was a concept id, native id mismatch with earlier concepts
        error
        ;; Concept id native id pair was valid
-       (let [{:keys [concept-type]} concept
+       (let [start-time (System/currentTimeMillis)
+             {:keys [concept-type]} concept
              table (tables/get-table-name provider concept-type)
              seq-name (str table "_seq")
              [cols values] (concept->insert-args concept (:small provider))
@@ -438,6 +439,8 @@
                           (string/join "," (repeat (count values) "?")))]
          (trace "Executing" stmt "with values" (pr-str values))
          (j/db-do-prepared db stmt values)
+         (info (format "j/db-do-prepared %s took [%d] ms"
+                       (:concept-id concept) (- (System/currentTimeMillis) start-time)))
          (after-save conn provider concept)
          nil)))
     (catch Exception e
