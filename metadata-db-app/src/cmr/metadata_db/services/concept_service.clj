@@ -127,9 +127,15 @@
   [db provider concept]
   (if (:concept-id concept)
     concept
-    (let [[existing-concept-id coll-concept-id deleted] (c/get-granule-concept-ids
+    (let [start-time (System/currentTimeMillis)
+          [existing-concept-id coll-concept-id deleted] (c/get-granule-concept-ids
                                                          db provider (:native-id concept))
+          end-time (System/currentTimeMillis)
+          _ (info (format "get granule concept id took [%d] ms"
+                        (- end-time start-time)))
           concept-id (if existing-concept-id existing-concept-id (c/generate-concept-id db concept))
+          _ (info (format "generate concept id %s took [%d] ms"
+                        concept-id (- (System/currentTimeMillis) end-time)))
           parent-concept-id (get-in concept [:extra-fields :parent-collection-id])]
       (if (and existing-concept-id
                (not= coll-concept-id parent-concept-id)
@@ -142,8 +148,11 @@
   "Set the created-at of the given concept to the value of its previous revision if exists."
   [db provider concept]
   (let [{:keys [concept-id concept-type]} concept
+        start-time (System/currentTimeMillis)
         existing-created-at (:created-at
                              (c/get-concept db concept-type provider concept-id))]
+    (info (format "get created-at for concept %s took [%d] ms"
+                  concept-id (- (System/currentTimeMillis) start-time)))
     (if existing-created-at
       (assoc concept :created-at existing-created-at)
       concept)))
@@ -174,8 +183,11 @@
   [db provider concept & previous-revision]
   (let [{:keys [concept-id concept-type]} concept
         previous-revision (first previous-revision)
+        start-time (System/currentTimeMillis)
         existing-created-at (:created-at (or previous-revision
                                              (c/get-concept db concept-type provider concept-id)))]
+    (info (format "get created-at extra granule %s took [%d] ms"
+                  concept-id (- (System/currentTimeMillis) start-time)))
     (if existing-created-at
       (assoc concept :created-at existing-created-at)
       concept)))
@@ -658,8 +670,9 @@
                      (set-or-generate-concept-id db provider)
                      (set-created-at db provider))
         {:keys [concept-type concept-id]} concept]
-
+(info (format "before validate-concept-revision-id took [%d] ms" (- (System/currentTimeMillis) start)))
     (validate-concept-revision-id db provider concept)
+
     ;; validate variable name
     (when (= :variable concept-type)
       (let [previous-concept (c/get-concept db concept-type provider concept-id)]
