@@ -58,7 +58,7 @@
    :spatial-keyword 1.1
    :temporal-keyword 1.1
    :version-id 1.0
-   :entry-title 2.2 
+   :entry-title 1.4 
    :provider 1.0
    :two-d-coord-name 1.0
    :processing-level-id 1.0
