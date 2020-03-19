@@ -75,35 +75,35 @@
     (let [results (:refs (search/find-refs :collection {:keyword "Relevancy"}))]
       (is (= ["Relevancy 4" "Relevancy 3" "Relevancy 2" "Relevancy 1"] (map :name results))))))
 
-(deftest keyword-relevancy-takes-precedence
-  (d/ingest-umm-spec-collection "PROV1"
-                                (data-umm-c/collection {:ShortName "AMSR-L1A"
-                                                        :EntryTitle "Relevancy 1"
-                                                        :Version "3"
-                                                        :Platforms [(data-umm-c/platform {:ShortName "Relevancy"})]}))
-  (d/ingest-umm-spec-collection "PROV1"
-                                (data-umm-c/collection {:ShortName "AST_05"
-                                                        :EntryId "Relevancy"
-                                                        :EntryTitle "AST_05"
-                                                        :Version "B"
-                                                        :Projects (data-umm-c/projects "Relevancy")
-                                                        :Platforms [(data-umm-c/platform {:ShortName "Relevancy"})]}))
-  (d/ingest-umm-spec-collection "PROV1"
-                                (data-umm-c/collection {:ShortName "AG_VIRTUAL"
-                                                        :EntryTitle "Relevancy 2"
-                                                        :Version "1"}))
-  (d/ingest-umm-spec-collection "PROV1"
-                                (data-umm-c/collection {:ShortName "AG_MAPSS"
-                                                        :EntryTitle "Relevancy 3"
-                                                        :Version "2"}))
-  (index/wait-until-indexed)
-  (let [results (:refs (search/find-refs :collection {:keyword "Relevancy"}))]
-    (is (= ["Relevancy 1" "Relevancy 2" "Relevancy 3" "AST_05"] (map :name results))))
-
-  (testing "Usage sort takes precedence over keyword Relevancy"
-    (let [results (:refs (search/find-refs :collection {:keyword "Relevancy" :sort-key "-usage-score"}))]
-      (is (= ["Relevancy 2" "Relevancy 3" "Relevancy 1" "AST_05"]
-             (map :name results))))))
+; (deftest keyword-relevancy-takes-precedence
+;   (d/ingest-umm-spec-collection "PROV1"
+;                                 (data-umm-c/collection {:ShortName "AMSR-L1A"
+;                                                         :EntryTitle "Relevancy 1"
+;                                                         :Version "3"
+;                                                         :Platforms [(data-umm-c/platform {:ShortName "Relevancy"})]}))
+;   (d/ingest-umm-spec-collection "PROV1"
+;                                 (data-umm-c/collection {:ShortName "AST_05"
+;                                                         :EntryId "Relevancy"
+;                                                         :EntryTitle "AST_05"
+;                                                         :Version "B"
+;                                                         :Projects (data-umm-c/projects "Relevancy")
+;                                                         :Platforms [(data-umm-c/platform {:ShortName "Relevancy"})]}))
+;   (d/ingest-umm-spec-collection "PROV1"
+;                                 (data-umm-c/collection {:ShortName "AG_VIRTUAL"
+;                                                         :EntryTitle "Relevancy 2"
+;                                                         :Version "1"}))
+;   (d/ingest-umm-spec-collection "PROV1"
+;                                 (data-umm-c/collection {:ShortName "AG_MAPSS"
+;                                                         :EntryTitle "Relevancy 3"
+;                                                         :Version "2"}))
+;   (index/wait-until-indexed)
+;   (let [results (:refs (search/find-refs :collection {:keyword "Relevancy"}))]
+;     (is (= ["Relevancy 1" "Relevancy 2" "Relevancy 3" "AST_05"] (map :name results))))
+;
+;   (testing "Usage sort takes precedence over keyword Relevancy"
+;     (let [results (:refs (search/find-refs :collection {:keyword "Relevancy" :sort-key "-usage-score"}))]
+;       (is (= ["Relevancy 2" "Relevancy 3" "Relevancy 1" "AST_05"]
+;              (map :name results))))))
 
 (deftest ingest-metrics-after-collections
   (d/ingest-umm-spec-collection "PROV1"
