@@ -49,8 +49,8 @@
 
 (def default-boosts
   "Field boosts to use if not provided."
-  {:short-name 1.4
-   :entry-id 1.4
+  {:short-name 2.0
+   :entry-id 2.0
    :project 1.0
    :platform 1.3
    :instrument 1.2
@@ -58,7 +58,7 @@
    :spatial-keyword 1.1
    :temporal-keyword 1.1
    :version-id 1.0
-   :entry-title 1.4 
+   :entry-title 1.5
    :provider 1.0
    :two-d-coord-name 1.0
    :processing-level-id 1.0
