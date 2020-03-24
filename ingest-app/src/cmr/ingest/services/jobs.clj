@@ -14,7 +14,8 @@
     [cmr.ingest.services.humanizer-alias-cache :as humanizer-alias-cache]
     [cmr.transmit.echo.acls :as echo-acls]
     [cmr.transmit.metadata-db :as mdb]
-    [cmr.transmit.search :as search]))
+    [cmr.transmit.search :as search]
+    [postal.core :refer [send-message]]))
 
 (def REINDEX_COLLECTION_PERMITTED_GROUPS_INTERVAL
   "The number of seconds between jobs to check for ACL changes and reindex collections."
@@ -157,7 +158,7 @@
 
 (defconfig email-subscription-processing-interval
   "Number of seconds between jobs processing email subscriptions."
-  {:default 3600
+  {:default 300
    :type Long})
 
 (defn trigger-full-refresh-collection-granule-aggregation-cache
@@ -222,6 +223,10 @@
   "Process email subscriptions and send email when found granules matching the collection and queries
   in the subscription and were created/updated during the last processing interval."
   [context]
+  (println "!!!!Before send-message")
+  (send-message {:host "gsfc-relay.ndc.nasa.gov" :port 25}
+                {:from "wind.cloud.sky@gmail.com" :to "wind.cloud.sky@gmail.com" :subject "hi" :body "test"})
+  (println "!!!!After send-message")
   (let [end-time (t/now)
         start-time (t/minus end-time (t/seconds (email-subscription-processing-interval)))
         time-constraint (str (str start-time) "," (str end-time))
