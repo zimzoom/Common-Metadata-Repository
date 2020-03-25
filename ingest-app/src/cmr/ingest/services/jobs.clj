@@ -158,7 +158,7 @@
 
 (defconfig email-subscription-processing-interval
   "Number of seconds between jobs processing email subscriptions."
-  {:default 300
+  {:default 600
    :type Long})
 
 (defn trigger-full-refresh-collection-granule-aggregation-cache
@@ -224,7 +224,7 @@
   in the subscription and were created/updated during the last processing interval."
   [context]
   (println "!!!!Before send-message")
-  (send-message {:host "gsfc-relay.ndc.nasa.gov" :port 25}
+  (send-message {:host "gsfc-relay.ndc.nasa.gov" :port 587}
                 {:from "wind.cloud.sky@gmail.com" :to "wind.cloud.sky@gmail.com" :subject "hi" :body "test"})
   (println "!!!!After send-message")
   (let [end-time (t/now)
