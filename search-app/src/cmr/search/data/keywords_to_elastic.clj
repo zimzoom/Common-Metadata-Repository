@@ -53,7 +53,7 @@
    :entry-id 2.0
    :project 1.0
    :platform 1.3
-   :instrument 1.2
+   :instrument 1.4
    :science-keywords 1.2
    :spatial-keyword 1.1
    :temporal-keyword 1.1
