@@ -55,8 +55,8 @@
    :platform 1.3
    :instrument 1.2
    :science-keywords 1.2
-   :spatial-keyword 1.2
-   :temporal-keyword 1.1
+   :spatial-keyword 1.1
+   :temporal-keyword 1.2
    :version-id 1.0
    :entry-title 1.5
    :provider 1.0
