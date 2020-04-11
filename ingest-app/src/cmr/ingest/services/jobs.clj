@@ -1,4 +1,4 @@
-(ns cmr.ingest.services.jobs
+ (ns cmr.ingest.services.jobs
   "This contains the scheduled jobs for the ingest application."
   (:require
     [cheshire.core :as json]
@@ -214,37 +214,38 @@
   [context subscriptions time-constraint]
   (doseq [subscription subscriptions
          :let [email-address (get-in subscription [:extra-fields :email-address])
+               sub-name (get-in subscription [:extra-fields :subscription-name])
                coll-id (get-in subscription [:extra-fields :collection-concept-id])
                query-string (-> (:metadata subscription)
                                 (json/decode true)
                                 :Query)
                query-params (create-query-params query-string)
-               params1 (merge {:created-at time-constraint}
-                              {:collection-concept-id coll-id}
+               params1 (merge {:created-at time-constraint
+                               :collection-concept-id coll-id}
                               query-params)
-               params2 (merge {:revision-date time-constraint}
-                              {:collection-concept-id coll-id}
+               params2 (merge {:revision-date time-constraint
+                               :collection-concept-id coll-id}
                               query-params)]]
-      (println "Processing subscription: " (:metadata subscription))
+      (info "Processing subscription: " sub-name)
       (try
         (let [gran-ref1 (search/find-granule-references context params1)
               gran-ref2 (search/find-granule-references context params2)
               gran-ref (distinct (concat gran-ref1 gran-ref2))
-              gran-ref-location (str (map :location gran-ref))]
+              gran-ref-location (pr-str (map :location gran-ref))]
           (when (seq gran-ref)
-            (info "Sending email for subscription: " (:metadata subscription))
+            (info "Start sending email for: " sub-name)
             (postal-core/send-message {:host (email-server-host) :port (email-server-port)}
                                       {:from (cmr-mail-sender) 
                                        :to email-address
                                        :subject "Email Subscription Notification"
-                                       :body (str "The following are the granule locations: \n"
+                                       :body (str "The following are the granule locations: \n\n"
                                                   gran-ref-location
-                                                  "\nThe subscription content is: \n"
+                                                  "\n\nThe subscription content is: \n"
                                                   (:metadata subscription))})
-            (info "Finished sending email for granule location: " gran-ref-location)))
+            (info "Finished sending email for: " sub-name)))
        (catch Exception e
          (info  "Exception caught in email subscription: \n" (.getMessage e)
-               "\nThe subscription content is: \n" (:metadata subscription))))))
+               "\nThe subscription name is: \n" sub-name)))))
 
 (defn- email-subscription-processing
   "Process email subscriptions and send email when found granules matching the collection and queries
