@@ -230,7 +230,7 @@
         (let [gran-ref1 (search/find-granule-references context params1)
               gran-ref2 (search/find-granule-references context params2)
               gran-ref (distinct (concat gran-ref1 gran-ref2))
-              gran-ref-location (map :location gran-ref)]
+              gran-ref-location (str (map :location gran-ref))]
           (when (seq gran-ref)
             (info "Sending email for subscription: " (:metadata subscription))
             (postal-core/send-message {:host (email-server-host) :port (email-server-port)}
