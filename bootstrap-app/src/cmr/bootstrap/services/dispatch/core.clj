@@ -34,6 +34,10 @@
    [this context provider-id collection-id options]
    "Bulk index all the granules in a collection.")
 
+  (index-autocomplete-suggestions
+   [this context]
+   "Bulk index all autocomplete suggestions")
+
   (index-variables
    [this context] [this context provider-id]
    "Bulk index all the variables in CMR. Optionally, pass a provider id, in

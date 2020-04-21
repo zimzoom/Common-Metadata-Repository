@@ -33,6 +33,9 @@
         (POST "/collections" {:keys [request-context body params]}
           (bulk-migration/migrate-collection request-context body params)))
       (context "/bulk_index" []
+        (POST "/autocomplete_suggestions" {:keys [request-context]}
+          (acl/verify-ingest-management-permission request-context :update)
+          (bulk-index/index-autocomplete-suggestions request-context))
         (POST "/providers" {:keys [request-context body params]}
           (acl/verify-ingest-management-permission request-context :update)
           (bulk-index/index-provider request-context body params))

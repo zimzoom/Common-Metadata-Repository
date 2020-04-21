@@ -490,7 +490,7 @@
 (defn indexer-reindex-suggestions-url
   "URL to reindex autocomplete suggestions"
   []
-  (format "http://localhost:%s/reindex-autocomplete-suggestions" (transmit-config/indexer-port)))
+  (format "http://localhost:%s/bulk_index/autocomplete_suggestions" (transmit-config/bootstrap-port)))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Virtual Product URLs
 

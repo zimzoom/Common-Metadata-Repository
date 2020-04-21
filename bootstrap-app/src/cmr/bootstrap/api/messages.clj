@@ -25,6 +25,10 @@
     result
     (format "Processing collection %s for bulk indexing." collection-id)))
 
+(defn index-autocomplete-suggestions
+  []
+  (format "Processing autocomplete suggestions for bulk indexing."))
+
 (defn index-variables
   "Message to return when indexing variables."
   [params provider-id result]

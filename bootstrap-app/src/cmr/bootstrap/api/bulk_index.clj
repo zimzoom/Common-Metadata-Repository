@@ -39,6 +39,14 @@
     {:status 202
      :body {:message (msg/index-collection params result collection-id)}}))
 
+(defn index-autocomplete-suggestions
+  "Index all autocomplete suggestions"
+  [context]
+  (let [dispatcher (api-util/get-dispatcher context :index-autocomplete-suggestions)
+        result (service/index-autocomplete-suggestions context dispatcher)]
+    {:status 202
+     :body {:message (msg/index-autocomplete-suggestions)}}))
+
 (defn data-later-than-date-time
   "Index all the data with a revision-date later than a given date-time."
   [context params]

@@ -355,6 +355,13 @@
                        (index-granules-for-collection system provider-id collection-id options))
                      (catch Throwable e
                        (error e (.getMessage e)))))))
+    (let [channel (:autocomplete-suggestion-channel core-async-dispatcher)]
+      (ca/thread (while true
+                   (try ; catch any errors and log them, but don't let the thread die
+                     (let [indexer-context {:system (helper/get-indexer system)}]
+                       (index/reindex-autocomplete-suggestions indexer-context))
+                     (catch Throwable e
+                       (error e (.getMessage e)))))))
     (let [channel (:system-concept-channel core-async-dispatcher)]
       (ca/thread (while true
                    (try ; catch any errors and log them, but don't let the thread die

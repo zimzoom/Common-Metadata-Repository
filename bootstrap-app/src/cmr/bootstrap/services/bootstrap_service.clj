@@ -24,6 +24,7 @@
    :index-services :message-queue-dispatcher
    :index-data-later-than-date-time :core-async-dispatcher
    :index-collection :core-async-dispatcher
+   :index-autocomplete-suggestions :core-async-dispatcher
    :index-system-concepts :core-async-dispatcher
    :index-concepts-by-id :core-async-dispatcher
    :fingerprint-by-id :synchronous-dispatcher
@@ -89,6 +90,11 @@
    (index-collection context dispatcher provider-id collection-id nil))
   ([context dispatcher provider-id collection-id options]
    (dispatch/index-collection dispatcher context provider-id collection-id options)))
+
+(defn index-autocomplete-suggestions
+  "Build index all autocomplete suggestions"
+  [context dispatcher]
+  (dispatch/index-autocomplete-suggestions context dispatcher))
 
 (defn index-system-concepts
   "Bulk index all the tags, acls, and access-groups."

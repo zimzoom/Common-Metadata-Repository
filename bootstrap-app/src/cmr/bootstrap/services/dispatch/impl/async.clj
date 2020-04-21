@@ -52,6 +52,13 @@
                                  {:provider-id provider-id
                                   :collection-id collection-id})))))
 
+(defn index-autocomplete-suggestions
+  "Bulk index all autocomplete suggestions"
+  [this context]
+  (let [channel (:autocomplete-suggestion-channel this)]
+    (info "Starting indexing of autocomplete suggestions")
+    (async/go (>! channel {}))))
+
 (defn index-system-concepts
   "Bulk index all the tags, acls, and access-groups."
   [this context start-index]
@@ -130,6 +137,7 @@
    :collection-db-channel (async/chan 100)
    :provider-index-channel (async/chan 10)
    :collection-index-channel (async/chan 100)
+   :autocomplete-suggestion-channel (async/chan 100)
    :data-index-channel (async/chan 10)
    :system-concept-channel (async/chan 10)
    :concept-id-channel (async/chan 10)
@@ -143,6 +151,7 @@
                            (:collection-db-channel channels)
                            (:provider-index-channel channels)
                            (:collection-index-channel channels)
+                           (:autocomplete-suggestion-channel channels)
                            (:data-index-channel channels)
                            (:system-concept-channel channels)
                            (:concept-id-channel channels)
