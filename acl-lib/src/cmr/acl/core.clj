@@ -186,6 +186,9 @@
   "Returns true if the user identified by the token in the cache has been granted
   SUBSCRIPTION_MANAGEMENT permission in ECHO ACLS for the given permission type."
   [context permission-type object-identity-type provider-id]
+  (println "Miss in cache, has-subscription-management-permission?: " 
+    (has-management-permission?
+      context permission-type object-identity-type provider-id "SUBSCRIPTION_MANAGEMENT"))
   (has-management-permission?
     context permission-type object-identity-type provider-id "SUBSCRIPTION_MANAGEMENT"))
 
@@ -221,6 +224,7 @@
   "Verifies the current user has been granted SUBSCRIPTION_MANAGEMENT
   permission in ECHO ACLs"
   [context permission-type object-identity-type provider-id]
+  (println "In verify-subscription-management-permission")
   (verify-management-permission
     context
     permission-type

@@ -44,10 +44,6 @@
     [this key lookup-fn]
     (-> cache-atom
         (swap! (fn [cache]
-                 (when (= 3 (count key))
-                   (if (cc/has? cache key)
-                     (println "hit: " (get (cc/hit cache key) key))
-                     (println "miss: " (get (cc/miss cache key (lookup-fn)) key))))
                  (if (cc/has? cache key)
                    (cc/hit cache key)
                    (cc/miss cache key (lookup-fn)))))
