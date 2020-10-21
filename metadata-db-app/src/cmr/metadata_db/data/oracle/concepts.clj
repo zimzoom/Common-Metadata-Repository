@@ -518,10 +518,10 @@
    (let [table (tables/get-table-name provider concept-type)
          {:keys [provider-id small]} provider
          stmt (if small
-                [(format "select *
+                [(format "select /*+ INDEX(%s) */ *
                            from %s outer,
                            ( select a.concept_id, a.revision_id
-                           from (select concept_id, max(revision_id) as revision_id
+                           from (select /*+ INDEX(%s) */ concept_id, max(revision_id) as revision_id
                            from %s
                            where provider_id = '%s'
                            and deleted = 0
@@ -529,7 +529,7 @@
                            and   delete_time < systimestamp
                            group by concept_id
                            ) a,
-                           (select concept_id, max(revision_id) as revision_id
+                           (select /*+ INDEX(%s) */ concept_id, max(revision_id) as revision_id
                            from %s
                            where provider_id = '%s'
                            group by concept_id
@@ -540,18 +540,18 @@
                            ) inner
                            where outer.concept_id = inner.concept_id
                            and   outer.revision_id = inner.revision_id"
-                         table table provider-id table provider-id EXPIRED_CONCEPTS_BATCH_SIZE)]
-                [(format "select *
+                         table table table table provider-id table table provider-id EXPIRED_CONCEPTS_BATCH_SIZE)]
+                [(format "select /*+ INDEX(%s) */ *
                            from %s outer,
                            ( select a.concept_id, a.revision_id
-                           from (select concept_id, max(revision_id) as revision_id
+                           from (select /*+ INDEX(%s) */ concept_id, max(revision_id) as revision_id
                            from %s
                            where deleted = 0
                            and   delete_time is not null
                            and   delete_time < systimestamp
                            group by concept_id
                            ) a,
-                           (select concept_id, max(revision_id) as revision_id
+                           (select /*+ INDEX(%s) */ concept_id, max(revision_id) as revision_id
                            from %s
                            group by concept_id
                            ) b
@@ -561,7 +561,7 @@
                            ) inner
                            where outer.concept_id = inner.concept_id
                            and   outer.revision_id = inner.revision_id"
-                         table table table EXPIRED_CONCEPTS_BATCH_SIZE)])]
+                         table table table table table table EXPIRED_CONCEPTS_BATCH_SIZE)])]
      (doall (map (partial db-result->concept-map concept-type conn (:provider-id provider))
                  (su/query conn stmt))))))
 
@@ -606,16 +606,16 @@
          ;; not the number of concept-id/revision-id pairs. All revisions are returned for
          ;; each returned concept-id.
          stmt (if small
-                [(format "select concept_id, revision_id from %s
+                [(format "select /*+ INDEX(%s) */ concept_id, revision_id from %s
                            where concept_id in (select * from
-                           (select concept_id from %s where provider_id = '%s' group by
+                           (select /*+ INDEX(%s) */ concept_id from %s where provider_id = '%s' group by
                            concept_id having count(*) > %d) where rownum <= %d)"
-                         table table provider-id max-revisions limit)]
-                [(format "select concept_id, revision_id from %s
+                         table table table table provider-id max-revisions limit)]
+                [(format "select /*+ INDEX(%s) */ concept_id, revision_id from %s
                            where concept_id in (select * from
-                           (select concept_id from %s group by
+                           (select /*+ INDEX(%s) */ concept_id from %s group by
                            concept_id having count(*) > %d) where rownum <= %d)"
-                         table table max-revisions limit)])
+                         table table table table max-revisions limit)])
          result (su/query conn stmt)
          ;; create a map of concept-ids to sequences of all returned revisions
          concept-id-rev-ids-map (reduce (fn [memo concept-map]
