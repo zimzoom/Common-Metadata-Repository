@@ -73,6 +73,10 @@
       :kibana kibana})))
 
 (defrecord ElasticServer
+    [
+     http-port
+     opts
+     node]
 
   lifecycle/Lifecycle
 
