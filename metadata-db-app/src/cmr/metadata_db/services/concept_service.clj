@@ -880,17 +880,23 @@
   Does noting if the given concept is not a service concept."
   [context concept-type concept-id]
   (when (= :service concept-type)
+    (info "CMR-7030-Debug Start of publish-service-association-update-events for service: " concept-id)
     (let [search-params (cutil/remove-nil-keys
                          {:concept-type :service-association
                           :service-concept-id concept-id
                           :exclude-metadata true
                           :latest true})
+          _ (info "CMR-7030-Debug Start of searching for associations in metadatadb for service: " concept-id)
           associations (filter #(= false (:deleted %))
-                               (search/find-concepts context search-params))]
+                               (search/find-concepts context search-params))
+          _ (info "CMR-7030-Debug End of searching for associations in metadatadb for service: " concept-id)]
+      (info "CMR-7030-Debug Start of publishing association update event for service: " concept-id)
       (doseq [association associations]
         (ingest-events/publish-event
           context
-         (ingest-events/concept-update-event association))))))
+         (ingest-events/concept-update-event association)))
+      (info "CMR-7030-Debug End of publishing association update event for service: " concept-id))
+    (info "CMR-7030-Debug End of publish-service-association-update-events for service: " concept-id)))
 
 (defn- publish-tool-association-update-events 
   "Publish a concept-update-event for each non-tombstoned tool associations that is related to the
@@ -914,6 +920,8 @@
 ;; false implies creation of a non-tombstone revision
 (defmethod save-concept-revision false
   [context concept]
+  (when (= :service (:concept-type concept))
+    (info "CMR-7030-Debug Start of save-concept-revision false"))
   (trace "concept:" (keys concept))
   (trace "provider id:" (:provider-id concept))
   (cv/validate-concept concept)
@@ -956,6 +964,9 @@
       (ingest-events/publish-event
        context
        (ingest-events/concept-update-event concept))
+
+      (when (= :service (:concept-type concept))
+        (info "CMR-7030-Debug End of save-concept-revision false"))
       concept)))
 
 (defn- delete-associated-tag-associations

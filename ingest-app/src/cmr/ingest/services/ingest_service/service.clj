@@ -1,5 +1,6 @@
 (ns cmr.ingest.services.ingest-service.service
   (:require
+   [cmr.common.log :refer (debug error info warn trace)]
    [cmr.common.util :refer [defn-timed]]
    [cmr.transmit.metadata-db2 :as mdb2]
    [cmr.umm-spec.umm-spec-core :as spec]))
@@ -15,11 +16,13 @@
   "Store a service concept in mdb and indexer. Return name, long-name, concept-id, and
   revision-id."
   [context concept]
+  (info "CMR-7030-Debug Start Ingest save-service")
   (let [metadata (:metadata concept)
         service (spec/parse-metadata context :service (:format concept) metadata)
         concept (add-extra-fields-for-service context concept service)
         {:keys [concept-id revision-id]} (mdb2/save-concept context
                                           (assoc concept :provider-id (:provider-id concept)
                                                          :native-id (:native-id concept)))]
+      (info "CMR-7030-Debug End Ingest save-service")
       {:concept-id concept-id
        :revision-id revision-id}))

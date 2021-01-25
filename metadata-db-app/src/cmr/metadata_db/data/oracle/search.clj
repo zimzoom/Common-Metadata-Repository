@@ -292,6 +292,8 @@
 (defn find-latest-concepts
   [db provider params]
   {:pre [(:concept-type params)]}
+  (when (= :service-association (:concept-type params))
+    (info "CMR-7030-Debug find-latest-concepts for service associations "))
   ;; First we find all revisions of the concepts that have at least one revision that matches the
   ;; search parameters. Then we find the latest revisions of those concepts and match with the
   ;; search parameters again in memory to find what we are looking for.
@@ -299,6 +301,8 @@
         table (tables/get-table-name provider concept-type)
         revision-concepts (find-concepts-in-table db table concept-type [provider]
                                                   (assoc params :include-all true))
+        _ (when (= :service-association (:concept-type params))
+            (info "CMR-7030-Debug After find-concepts-in-table."))
         latest-concepts (->> revision-concepts
                              (group-by :concept-id)
                              (map (fn [[concept-id concepts]]
