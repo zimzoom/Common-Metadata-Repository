@@ -891,10 +891,10 @@
                                (search/find-concepts context search-params))
           _ (info "CMR-7030-Debug End of searching for associations in metadatadb for service: " concept-id)]
       (info "CMR-7030-Debug Start of publishing association update event for service: " concept-id)
-      (doseq [association associations]
+      (when (> (count associations) 0)
         (ingest-events/publish-event
-          context
-         (ingest-events/concept-update-event association)))
+         context
+         (ingest-events/associations-update-event associations)))
       (info "CMR-7030-Debug End of publishing association update event for service: " concept-id))
     (info "CMR-7030-Debug End of publish-service-association-update-events for service: " concept-id)))
 
