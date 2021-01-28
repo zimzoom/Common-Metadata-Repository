@@ -879,18 +879,22 @@
   search when service is updated because service info is indexed into the associated collections.
   Does nothing if the given concept is not a service concept."
   [context concept-type concept-id]
+  (info "CMR-7030-PublishAllAssociationsInOneEvent-1.165.x Start publish-service-associations-update-event")
   (when (= :service concept-type)
     (let [search-params (cutil/remove-nil-keys
                          {:concept-type :service-association
                           :service-concept-id concept-id
                           :exclude-metadata true
                           :latest true})
+          _ (info "CMR-7030-PublishAllAssociationsInOneEvent-1.165.x Start searching for associations")
           associations (filter #(= false (:deleted %))
                                (search/find-concepts context search-params))]
+      (info "CMR-7030-PublishAllAssociationsInOneEvent-1.165.x Start publishing associations event")
       (when (> (count associations) 0)
         (ingest-events/publish-event
          context
-         (ingest-events/associations-update-event associations))))))
+         (ingest-events/associations-update-event associations)))
+    (info "CMR-7030-PublishAllAssociationsInOneEvent-1.165.x End publishing associations event"))))
 
 (defn- publish-tool-associations-update-event
   "Publish one concept-update-event for all non-tombstoned tool associations for the
