@@ -879,8 +879,8 @@
   search when service is updated because service info is indexed into the associated collections.
   Does nothing if the given concept is not a service concept."
   [context concept-type concept-id]
-  (info "CMR-7030-PublishAllAssociationsInOneEvent-1.165.x Start publish-service-associations-update-event")
   (when (= :service concept-type)
+    (info "CMR-7030-PublishAllAssociationsInOneEvent-1.165.x Start publish-service-associations-update-event")
     (let [search-params (cutil/remove-nil-keys
                          {:concept-type :service-association
                           :service-concept-id concept-id
