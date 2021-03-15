@@ -438,22 +438,22 @@
         user1-token (e/login (s/context) "user1")
         tag1 (tags/save-tag
                user1-token
-               (tags/make-tag {:tag-key "NON-CWIC"})
+               (tags/make-tag {:tag-key "NON-OPENSEARCH"})
                [coll1 coll5])
         tag2 (tags/save-tag
                user1-token
-               (tags/make-tag {:tag-key (common-config/cwic-tag)})
+               (tags/make-tag {:tag-key (common-config/opensearch-tag)})
                [coll2 coll6 coll7 coll8 coll9 coll10 coll11 coll12 coll13 coll14
                 coll15 coll16 coll17])]
 
     (index/wait-until-indexed)
 
     ;; coll1
-    ;; non-cwic tagged with granule
+    ;; non-opensearch tagged with granule
     (make-gran coll1 (p/point 0 0) nil)
 
     ;; coll2
-    ;; cwic tagged with granule
+    ;; opensearch tagged with granule
     (make-gran coll2 (p/point 0 0) nil)
 
     ;; coll 3
@@ -464,10 +464,10 @@
     ;; no tag without granule
 
     ;; coll 5
-    ;; non-cwic tagged no granule
+    ;; non-opensearch tagged no granule
 
     ;; coll 6
-    ;; cwic tagged no granule
+    ;; opensearch tagged no granule
 
     (index/wait-until-indexed)
     (testing "Search with has-granules-or-opensearch feature true"
@@ -476,7 +476,7 @@
                       coll11 coll12 coll13 coll14
                       coll15 coll16 coll17]
                      (search/find-refs :collection
-                                       {:has_granules_or_cwic true
+                                       {:has_granules_or_opensearch true
                                         :page-size 20}
                                        {:snake-kebab? false})))
 
@@ -486,7 +486,7 @@
                       coll11 coll12 coll13 coll14
                       coll15 coll16 coll17]
                      (search/find-refs :collection
-                                       {:has_granules_or_cwic false
+                                       {:has_granules_or_opensearch false
                                         :page-size 20}
                                        {:snake-kebab? false})))))
 
@@ -502,11 +502,11 @@
         user1-token (e/login (s/context) "user1")
         tag1 (tags/save-tag
               user1-token
-              (tags/make-tag {:tag-key "NON-CWIC"})
+              (tags/make-tag {:tag-key "NON-"})
               [coll1 coll2])
         tag2 (tags/save-tag
               user1-token
-              (tags/make-tag {:tag-key (common-config/cwic-tag)})
+              (tags/make-tag {:tag-key (common-config/opensearch-tag)})
               [coll3 coll4])]
 
     (make-gran coll1 (p/point 0 0) nil)
@@ -522,9 +522,9 @@
     (testing "Sorting by has-granules-or-opensearch"
       (is (d/refs-match-order? [coll1 coll3 coll4 coll5 coll2 coll6]
                                (search/find-refs :collection {:page-size 20
-                                                              :sort-key ["has_granules_or_cwic"
+                                                              :sort-key ["has_granules_or_opensearch"
                                                                          "revision-date"]})))
       (is (d/refs-match-order? [coll2 coll6 coll1 coll3 coll4 coll5]
                                (search/find-refs :collection {:page-size 20
-                                                              :sort-key ["-has_granules_or_cwic"
+                                                              :sort-key ["-has_granules_or_opensearch"
                                                                          "revision-date"]}))))))
