@@ -49,10 +49,10 @@
 (defn refresh-has-granules-or-opensearch-map
   "Gets the latest provider holdings and updates the has-granules-or-opensearch-map stored in the cache."
   [context]
-  (let [has-granules-or-opensearch-map (collection-granule-counts->has-granules-or-opensearch-map)
-                                  (merge
-                                   (idx/get-collection-granule-counts context nil)
-                                   (get-opensearch-collections context nil))]
+  (let [has-granules-or-opensearch-map (collection-granule-counts->has-granules-or-opensearch-map
+                                        (merge
+                                         (idx/get-collection-granule-counts context nil)
+                                         (get-opensearch-collections context nil)))]
     (cache/set-value (cache/context->cache context has-granules-or-opensearch-cache-key)
                      :has-granules-or-opensearch has-granules-or-opensearch-map)))
 
