@@ -413,7 +413,7 @@
           "granule count in opendata format"
           :opendata (search/find-concepts-opendata :collection {:include-has-granules true :include-granule-counts true}))))))
 
-(deftest search-collections-has-granules-or-cwic-test
+(deftest search-collections-has-granules-or-opensearch-test
   (let [coll1 (make-coll 1 m/whole-world nil)
         coll2 (make-coll 2 m/whole-world nil)
         coll3 (make-coll 3 m/whole-world nil)
@@ -470,7 +470,7 @@
     ;; cwic tagged no granule
 
     (index/wait-until-indexed)
-    (testing "Search with has-granules-or-cwic feature true"
+    (testing "Search with has-granules-or-opensearch feature true"
       (d/refs-match? [coll1 coll3 coll6 coll2
                       coll7 coll8 coll9 coll10
                       coll11 coll12 coll13 coll14
@@ -480,7 +480,7 @@
                                         :page-size 20}
                                        {:snake-kebab? false})))
 
-    (testing "Search with has-granules-or-cwic feature false"
+    (testing "Search with has-granules-or-opensearch feature false"
       (d/refs-match? [coll4 coll5 coll6
                       coll7 coll8 coll9 coll10
                       coll11 coll12 coll13 coll14
@@ -490,7 +490,7 @@
                                         :page-size 20}
                                        {:snake-kebab? false})))))
 
-(deftest search-collections-has-granules-or-cwic-sort-test
+(deftest search-collections-has-granules-or-opensearch-sort-test
   (let [coll1 (make-coll 1 m/whole-world nil)
         coll2 (make-coll 2 m/whole-world nil)
         coll3 (make-coll 3 m/whole-world nil)
@@ -519,7 +519,7 @@
     ;; Reindex all the collections to get the latest information.
     (ingest/reindex-all-collections)
     (index/wait-until-indexed)
-    (testing "Sorting by has-granules-or-cwic"
+    (testing "Sorting by has-granules-or-opensearch"
       (is (d/refs-match-order? [coll1 coll3 coll4 coll5 coll2 coll6]
                                (search/find-refs :collection {:page-size 20
                                                               :sort-key ["has_granules_or_cwic"

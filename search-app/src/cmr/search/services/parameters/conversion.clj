@@ -42,7 +42,7 @@
    :granule-data-format-h :humanizer
    :horizontal-data-resolution-range :range-facet
    :has-granules :has-granules
-   :has-granules-or-cwic :has-granules-or-cwic
+   :has-granules-or-opensearch :has-granules-or-opensearch
    :has-granules-created-at :multi-date-range
    :has-granules-revised-at :multi-date-range
    :has-opendap-url :boolean
@@ -341,9 +341,9 @@
     cqm/match-all
     (qm/->HasGranulesCondition (= "true" (str/lower-case value)))))
 
-(defmethod common-params/parameter->condition :has-granules-or-cwic
+(defmethod common-params/parameter->condition :has-granules-or-opensearch
   [_ _ _ value _]
-  (qm/->HasGranulesOrCwicCondition (= "true" (str/lower-case value))))
+  (qm/->HasGranulesOrOpenSearchCondition (= "true" (str/lower-case value))))
 
 (defn- collection-data-type-matches-science-quality?
   "Convert the collection-data-type parameter with wildcards to a regex. This function
@@ -407,7 +407,7 @@
           (fn [sort-keys]
             (seq (for [{:keys [field order] :as sort-key} sort-keys]
                    (if (or (= field :has-granules)
-                           (= field :has-granules-or-cwic))
+                           (= field :has-granules-or-opensearch))
                      {:field field :order (if (= order :asc) :desc :asc)}
                      sort-key))))))
 

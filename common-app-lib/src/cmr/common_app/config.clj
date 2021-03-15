@@ -4,9 +4,9 @@
   (:require
    [cmr.common.config :refer [defconfig]]))
 
-(defconfig cwic-tag
-  "has-granules-or-cwic should also return any collection with configured cwic-tag"
-  {:default "org.ceos.wgiss.cwic.granules.prod"})
+(defconfig opensearch-tag
+  "has-granules-or-opensearch should also return any collection with configured opensearch-tag"
+  {:default "opensearch.granule.osdd"})
 
 (defconfig collection-umm-version
   "Defines the latest collection umm version accepted by ingest - it's the latest official version.
