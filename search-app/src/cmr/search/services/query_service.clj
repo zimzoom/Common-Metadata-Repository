@@ -48,7 +48,7 @@
   (:require
     cmr.search.data.complex-to-simple-converters.attribute
     cmr.search.data.complex-to-simple-converters.has-granules
-    cmr.search.data.complex-to-simple-converters.has-granules-or-cmr.search.services.query-execution.has-granules-or-opensearch-results-feature
+    cmr.search.data.complex-to-simple-converters.has-granules-or-opensearch
     cmr.search.data.complex-to-simple-converters.orbit
     cmr.search.data.complex-to-simple-converters.spatial
     cmr.search.data.complex-to-simple-converters.temporal
