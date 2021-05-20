@@ -29,9 +29,9 @@ exports.bootstrapGremilinServer = async () => {
       .then((json) => {
         if (json.errors) {
           throw new Error(`The following errors ocurred: ${json.errors}`)
-        } else {
-          return json.items
         }
+
+        return json.items
       })
       .catch((error) => {
         console.warn(`Could not complete request due to error: ${error}`)
