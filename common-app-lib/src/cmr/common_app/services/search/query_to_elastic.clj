@@ -212,7 +212,7 @@
           :slop 0
           :in_order true}}
        {:query_string {:query (escape-query-string query-str)
-                       :analyzer :whitespace
+                       :analyzer :snowball
                        :default_field elastic-field
                        :default_operator :and}})))
 
