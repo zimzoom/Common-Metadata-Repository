@@ -252,11 +252,26 @@
       (merge default-mappings query-field->lowercase-granule-doc-values-fields-map)
       default-mappings)))
 
+(defn- add-plural-or-singular
+ "Takes a list of keywords, and adds a plural version (ending in 's') if it is singular (doesn't end
+  in 's') or adds a singular version if the keyword is already plural."
+ [keywords]
+ (-> (map #(if (and (= (last %) \s) (not (= "s" %)))
+             [% (subs % 0 (dec (.length %)))]
+             [% (str % \s)])
+       keywords)
+     (flatten)
+     (set)))
+
 (defn- keywords-in-query
   "Returns a list of keywords if the query contains a keyword condition or nil if not.
   Used to set sort and use function score for keyword queries."
-  [query]
-  (keywords-extractor/extract-keywords query))
+  [query is-keyword-phrase?]
+  (as-> query intermediate
+        (keywords-extractor/extract-keywords intermediate)
+        (if is-keyword-phrase?
+          intermediate
+          (update-in intermediate [:keywords] add-plural-or-singular))))
 
 (defn- get-max-kw-number-allowed
   "Returns the max number of keyword string with wildcards allowed by elastic query,
@@ -354,11 +369,14 @@
                                   #(map remove-quotes-from-keyword-query-string %))
         boosts (:boosts unquoted-query)
         {:keys [concept-type condition]} (query-expense/order-conditions unquoted-query)
-        core-query (q2e/condition->elastic condition concept-type)]
+        core-query (q2e/condition->elastic condition concept-type)
+        query-conditions (get-in unquoted-query [:condition :conditions])
+        is-keyword-phrase? (some #{:keyword-phrase} (map #(:field %) query-conditions))]
     ;;Need the original query here because when the query-str is quoted, it's processed differently.
-    (let [keywords (keywords-in-query query)]
+    (let [keywords (keywords-in-query query is-keyword-phrase?)]
       (if-let [all-keywords (seq (concat (:keywords keywords) (:field-keywords keywords)))]
        (do
+        (println all-keywords)
         (validate-keyword-wildcards all-keywords)
         ;; Forces score to be returned even if not sorting by score.
         {:track_scores true

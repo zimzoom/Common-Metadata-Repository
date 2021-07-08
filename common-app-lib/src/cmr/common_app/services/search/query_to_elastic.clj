@@ -212,7 +212,7 @@
           :slop 0
           :in_order true}}
        {:query_string {:query (escape-query-string query-str)
-                       :analyzer :snowball
+                       :analyzer :whitespace
                        :default_field elastic-field
                        :default_operator :and}})))
 
@@ -344,7 +344,7 @@
   (condition->elastic
     [{:keys [field value]} _]
     {:match_bool_prefix {field {:query value}}})
-  
+
   cmr.common_app.services.search.query_model.MultiMatchCondition
   (condition->elastic
     [{:keys [query-type fields value opts]} _]
