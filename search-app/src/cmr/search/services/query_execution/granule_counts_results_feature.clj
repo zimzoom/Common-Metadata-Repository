@@ -84,13 +84,15 @@
 (defn- extract-spatial-operator
   "Determine whether spatial conditions should be ORed or ANDed together"
   [context query]
-  (let [spatial-or-option? (-> context
-                               :query-string
-                               (string/split #"\?|&")
-                               (as-> context (some #(= % "options%5Bspatial%5D%5Bor%5D=true") context)))]
-    (if spatial-or-option?
-      :or
-      :and)))
+  (if (empty? (:query-string context))
+    :and
+    (let [spatial-or-option? (-> context
+                                 :query-string
+                                 (string/split #"\?|&")
+                                 (as-> context (some #(= % "options%5Bspatial%5D%5Bor%5D=true") context)))]
+      (if spatial-or-option?
+        :or
+        :and))))
 
 (defn- combine-spatial-and-non-spatial-conditions
   "Helper function. If spatial conitions are ORed, combine them with the rest of
