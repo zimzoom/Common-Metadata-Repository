@@ -363,6 +363,11 @@
      nil)
 
     (index/wait-until-indexed)
+    ;; Refresh the aggregate cache so that it includes all the granules that were added.
+    (index/full-refresh-collection-granule-aggregate-cache)
+    ;; Reindex all the collections to get the latest information.
+    (ingest/reindex-all-collections)
+    (index/wait-until-indexed)
 
     (testing "ORed granule counts special case"
       (let [coll6745-id (:concept-id coll6745)
