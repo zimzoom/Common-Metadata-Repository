@@ -1,6 +1,7 @@
 (ns cmr.ingest.services.ingest-service.collection
   (:require
    [clojure.string :as string]
+   [cmr.common.api.context :as common-context]
    [cmr.common.util :refer [defn-timed]]
    [cmr.ingest.config :as config]
    [cmr.ingest.services.helper :as ingest-helper]
@@ -32,8 +33,9 @@
    (validate-and-parse-collection-concept context collection-concept nil validation-options))
   ([context collection-concept prev-concept validation-options]
    (v/validate-concept-request collection-concept)
-   (when-not (:bulk-update? validation-options)
-     (v/validate-concept-metadata collection-concept))
+   ;;(when-not (:bulk-update? validation-options)
+    ;; (v/validate-concept-metadata collection-concept))
+   (println "USERID: " (common-context/context->user-id context))
    (let [{:keys [format metadata]} collection-concept
          collection (spec/parse-metadata context :collection format metadata {:sanitize? false})
          sanitized-collection (spec/parse-metadata context :collection format metadata)
@@ -48,10 +50,10 @@
          ;;   or return existing errors as warnings(it could be nil)
          ;; else
          ;;  throw errors for validation on sanitized collection, if there are any.
-         err-warnings (v/umm-spec-validate-collection
-                       sanitized-collection sanitized-prev-collection validation-options context false)
+         err-warnings nil ;;(v/umm-spec-validate-collection
+                       ;;sanitized-collection sanitized-prev-collection validation-options context false)
          ;; Return warnings for schema validation errors going from xml -> UMM
-         warnings (v/validate-collection-umm-spec-schema collection validation-options)
+         warnings nil ;;(v/validate-collection-umm-spec-schema collection validation-options)
          ;; Return warnings for validation errors on collection without sanitization
          collection-warnings (concat
                               (v/umm-spec-validate-collection collection validation-options context true)
@@ -81,7 +83,7 @@
         coll-concept (assoc (add-extra-fields-for-collection context concept collection)
                             :umm-concept collection)]
     ;; progressive update doesn't apply to business rules.
-    (v/validate-business-rules context coll-concept prev-concept)
+    ;;(v/validate-business-rules context coll-concept prev-concept)
     {:concept coll-concept
      :warnings warnings}))
 
