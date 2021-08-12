@@ -186,7 +186,6 @@
   ([collection validation-options context warn?]
    (umm-spec-validate-collection collection nil validation-options context warn?))
   ([collection prev-collection validation-options context warn?]
-   (println "validation-options: " validation-options)
    (when-let [err-messages (seq (umm-spec-validation/validate-collection
                                  collection
                                  (when (:validate-keywords? validation-options)
