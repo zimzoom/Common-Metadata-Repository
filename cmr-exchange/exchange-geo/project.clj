@@ -27,9 +27,9 @@
                  [com.vividsolutions/jts "1.13"]
                  [net.sf.geographiclib/GeographicLib-Java "1.49"]
                  [org.clojure/clojure "1.9.0"]
-                 [org.geotools/gt-geometry "20.0"]
-                 [org.geotools/gt-referencing "20.0"]]
-  :repositories [["osgeo" "https://download.osgeo.org/webdav/geotools"]]
+                 [org.geotools/gt-geometry "24.5"]
+                 [org.geotools/gt-referencing "24.5"]]
+  :repositories [["osgeo" "https://repo.osgeo.org/repository/release/"]]
   :profiles {:ubercompile {:aot :all
                            :source-paths ["test"]}
              :security {:plugins [[com.livingsocial/lein-dependency-check "1.1.1"]]
