@@ -388,7 +388,7 @@ out will include the `CMR-Time-Out` header set to `true`.
 
 #### <a name="html"></a> HTML
 
-The HTML response format is supported for collections. It allows a single collection record to be viewed in a web browser. HTML is only supported for retrieving a single collection at a time with a URL of the format:
+The HTML response format is supported for collections and is only meaningful in a web browser. It allows a single collection record to be viewed in a web browser at a time. The HTML URL is in the format of:
 
 ```
 %CMR-ENDPOINT%/concepts/<concept-id>
