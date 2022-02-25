@@ -298,12 +298,8 @@
        ;; errors only when new errors are introduced, otherwise return all the existing errors as
        ;; error-warnings.
        (if (and (config/progressive-update-enabled)
-                (not (:bulk-update? validation-options))
-                prev-collection)
-         (let [prev-err-messages (if (and (:test-existing-errors? validation-options)
-                                          ;; double check to make sure only the local and ci tests can use the header.
-                                          (transmit-config/echo-system-token? context)
-                                          (= "mock-echo-system-token" (:token context)))
+                (not (:bulk-update? validation-options)))
+         (let [prev-err-messages (if true 
                                    ;; We can't really test the case when the errors are existing errors
                                    ;; because we can't ingest invalid collections into the system.
                                    ;; We can only mimic the case when the validation errors for the updated
