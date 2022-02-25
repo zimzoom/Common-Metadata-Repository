@@ -298,8 +298,9 @@
        ;; errors only when new errors are introduced, otherwise return all the existing errors as
        ;; error-warnings.
        (if (and (config/progressive-update-enabled)
-                (not (:bulk-update? validation-options)))
-         (let [prev-err-messages (if true 
+                (not (:bulk-update? validation-options))
+                prev-collection)
+         (let [prev-err-messages (if (:test-existing-errors? validation-options)
                                    ;; We can't really test the case when the errors are existing errors
                                    ;; because we can't ingest invalid collections into the system.
                                    ;; We can only mimic the case when the validation errors for the updated
