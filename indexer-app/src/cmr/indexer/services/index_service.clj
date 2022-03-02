@@ -221,7 +221,7 @@
        (let [latest-collection-batches (meta-db/find-in-batches
                                         context
                                         :collection
-                                        REINDEX_BATCH_SIZE
+                                        (REINDEX_BATCH_SIZE)
                                         {:provider-id provider-id :latest true})]
          (bulk-index context latest-collection-batches {:all-revisions-index? false
                                                         :force-version? force-version?})))
@@ -233,7 +233,7 @@
        (let [all-revisions-batches (meta-db/find-in-batches
                                     context
                                     :collection
-                                    REINDEX_BATCH_SIZE
+                                    (REINDEX_BATCH_SIZE)
                                     {:provider-id provider-id})]
          (bulk-index context all-revisions-batches {:all-revisions-index? true
                                                     :force-version? force-version?}))))))
@@ -245,7 +245,7 @@
   (let [latest-tag-batches (meta-db/find-in-batches
                             context
                             :tag
-                            REINDEX_BATCH_SIZE
+                            (REINDEX_BATCH_SIZE)
                             {:latest true})]
     (bulk-index context latest-tag-batches)))
 
