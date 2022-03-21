@@ -48,7 +48,6 @@ def get_collections(env:dict, token, provider, page_num, page_size):
         response = requests.get(url, headers=headers)
         json_data = response.json()
         logger.debug('get_collections: response=%s', json_data)
-        response.status_code = 444
         if response.status_code == 200:
             return json_data
     except requests.exceptions.RequestException as error:

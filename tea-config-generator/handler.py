@@ -199,7 +199,13 @@ def generate_tea_config(event, context):
         env['pretty-print'] = True
 
     processor = tea.CreateTeaConfig(env)
-    result = processor.create_tea_config(env, provider, token)
+    result = ""
+    try:
+        result = processor.create_tea_config(env, provider, token)
+    except Exception as e:
+        etype, eobj, etb = sys.exc_info()
+        fname = os.path.split(etb.tb_frame.f_code.co_filename)[1]
+        result = {'error-type': etype, 'file': fname, 'line': etb.tb_lineno}
     result['headers'] = {'cmr-took': finish_timer(start),
         'content-type': 'text/yaml',
         'cmr-url': env['cmr-url'],

@@ -28,7 +28,6 @@ class CreateTeaConfig:
             return {'statusCode': 404,
                 'body': f'No S3 prefixes returned for {provider} when using {safe_token}: {msg}.'}
         acls = get_acls(env, provider, token)
-        return {'statusCode':444, 'body': 'got this far 1'}
         for acl in acls:
             acl_url = acl['location']
             self.logger.debug('---------------------')
