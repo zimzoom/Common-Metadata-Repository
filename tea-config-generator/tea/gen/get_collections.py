@@ -8,7 +8,7 @@ def get_collections_s3_prefixes_dict(env: dict, token, provider, page_num, page_
     all_collections_s3_prefixes_dict = {}
     json_data = get_collections(env, token, provider, page_num, page_size)
     if 'hits' not in json_data or json_data['hits'] == '0':
-        return {}
+        return json_data
     hits = json_data['hits']
     logger = util.get_logger(env)
     logger.debug('Hits=%d',hits)
@@ -52,7 +52,7 @@ def get_collections(env:dict, token, provider, page_num, page_size):
             return json_data
     except requests.exceptions.RequestException as error:
         logger.error('Error occurred in get_collections: %s', error)
-    return {}
+    return {'err-code':response.status_code, 'err-reason': response.reason}
 
 def get_collection(env:dict, token, concept_id):
     """ Method returns collection for given concept_id """

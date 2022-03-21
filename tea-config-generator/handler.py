@@ -202,6 +202,7 @@ def generate_tea_config(event, context):
     result['headers'] = {'cmr-took': finish_timer(start),
         'content-type': 'text/yaml',
         'cmr-url': env['cmr-url'],
+        'cmr-provider': provider,
         'cmr-auth': token}
 
     return result

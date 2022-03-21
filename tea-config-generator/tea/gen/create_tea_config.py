@@ -22,8 +22,11 @@ class CreateTeaConfig:
         all_s3_prefix_groups_dict = {}
         all_collections_s3_prefixes_dict = \
             get_collections_s3_prefixes_dict(env, token, provider, 1, 2000)
-        if not all_collections_s3_prefixes_dict:
-            return {'statusCode': 404, 'body': 'No S3 prefixes returned'}
+        safe_token = token[0:-8] + "..." + token[-4:]
+        if 'err-code' in all_collections_s3_prefixes_dict:
+            msg = all_collections_s3_prefixes_dict['err-reason']
+            return {'statusCode': 404,
+                'body': f'No S3 prefixes returned for {provider} when using {safe_token}: {msg}.'}
         acls = get_acls(env, provider, token)
         for acl in acls:
             acl_url = acl['location']
@@ -61,7 +64,7 @@ class CreateTeaConfig:
             return {'statusCode': 200, 'body': tea_config_text}
 
         self.logger.info('No S3 prefixes found')
-        return {'statusCode': 404, 'body': 'No S3 prefixes found'}
+        return {'statusCode': 404, 'body': f'No S3 prefixes found for provider {provider} when using {safe_token}.'}
 
 def main():
     """ Main method - a direct unit test """
