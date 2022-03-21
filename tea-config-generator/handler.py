@@ -9,6 +9,7 @@ import datetime
 import boto3
 
 import tea.gen.create_tea_config as tea
+from  tea.gen import utils
 
 #pylint: disable=W0613 # AWS requires event and context, but these are not always used
 
@@ -203,6 +204,6 @@ def generate_tea_config(event, context):
         'content-type': 'text/yaml',
         'cmr-url': env['cmr-url'],
         'cmr-provider': provider,
-        'cmr-auth': token}
+        'cmr-auth': utils.safe_to_print(token)}
 
     return result

@@ -1,7 +1,7 @@
 """ Main module to create TEA config """
 import logging
 import sys
-import tea.gen.utils as util
+from tea.gen import utils
 from tea.gen.utils import add_to_dict, create_tea_config
 from tea.gen.get_acls import get_acl, get_acls
 from tea.gen.get_groups import get_group_names
@@ -14,7 +14,7 @@ from tea.gen.get_collections import get_collections_s3_prefixes_dict
 class CreateTeaConfig:
     """ Main class to create TEA config """
     def __init__(self, env):
-        self.logger = util.get_logger(env)
+        self.logger = utils.get_logger(env)
         self.logger.debug('Creating TEA configuraton')
 
     def create_tea_config(self, env:dict, provider:str, token:str):
@@ -22,7 +22,7 @@ class CreateTeaConfig:
         all_s3_prefix_groups_dict = {}
         all_collections_s3_prefixes_dict = \
             get_collections_s3_prefixes_dict(env, token, provider, 1, 2000)
-        safe_token = token[0:-8] + "..." + token[-4:]
+        safe_token = utils.safe_to_print(token)
         if 'err-code' in all_collections_s3_prefixes_dict:
             msg = all_collections_s3_prefixes_dict['err-reason']
             return {'statusCode': 404,
@@ -64,7 +64,8 @@ class CreateTeaConfig:
             return {'statusCode': 200, 'body': tea_config_text}
 
         self.logger.info('No S3 prefixes found')
-        return {'statusCode': 404, 'body': f'No S3 prefixes found for provider {provider} when using {safe_token}.'}
+        return {'statusCode': 404, 'body':
+            f'No S3 prefixes found for provider {provider} when using {safe_token}.'}
 
 def main():
     """ Main method - a direct unit test """

@@ -48,11 +48,12 @@ def get_collections(env:dict, token, provider, page_num, page_size):
         response = requests.get(url, headers=headers)
         json_data = response.json()
         logger.debug('get_collections: response=%s', json_data)
+        response.status_code = 444
         if response.status_code == 200:
             return json_data
     except requests.exceptions.RequestException as error:
         logger.error('Error occurred in get_collections: %s', error)
-    return {'err-code':response.status_code, 'err-reason': response.reason}
+    return {'err-code':response.status_code, 'err-reason': response.reason + " using " + cmr_base}
 
 def get_collection(env:dict, token, concept_id):
     """ Method returns collection for given concept_id """

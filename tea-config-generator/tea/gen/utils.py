@@ -57,3 +57,15 @@ def get_logger(envirnment):
     logger = logging.getLogger()
     logger.setLevel(level)
     return logger
+
+def safe_to_print(raw:str, first:int = None, last:int = None):
+    """ Return a string containing sensitive information  that is safe to print in logs"""
+    if first is None:
+        first = 20
+    if last is None:
+        last = -4
+    if 0 < last:
+        last = last * -1
+    return raw[:first]+'...'+raw[last:]
+
+safe_to_print("012345567890abcdefghijklmnopqrstuvwxyz")
