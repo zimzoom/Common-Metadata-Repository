@@ -199,8 +199,7 @@ def generate_tea_config(event, context):
         env['pretty-print'] = True
 
     processor = tea.CreateTeaConfig(env)
-    #result = processor.create_tea_config(env, provider, token)
-    result = {}
+    result = processor.create_tea_config(env, provider, token)
     result['headers'] = {'cmr-took': finish_timer(start),
         'content-type': 'text/yaml',
         'cmr-url': env['cmr-url'],
