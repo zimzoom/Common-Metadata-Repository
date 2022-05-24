@@ -2,9 +2,11 @@ import 'array-foreach-async'
 
 import axios from 'axios'
 
-import { SQSClient, SendMessageBatchCommand } from '@aws-sdk/client-sqs'
+// import { SQSClient, SendMessageBatchCommand } from '@aws-sdk/client-sqs'
+import { SQSClient } from '@aws-sdk/client-sqs'
 
 import { chunkArray } from '../chunkArray'
+import indexCmrCollection from '../../indexCmrCollection/handler'
 
 let sqs
 
@@ -64,26 +66,34 @@ export const fetchPageFromCMR = async ({
 
     if (chunkedItems.length > 0) {
       await chunkedItems.forEachAsync(async (chunk) => {
-        const sqsEntries = []
+        // const sqsEntries = []
 
-        chunk.forEach((collection) => {
+        await chunk.forEachAsync(async (collection) => {
           const { id: conceptId } = collection
 
-          sqsEntries.push({
-            Id: conceptId,
-            MessageBody: JSON.stringify({
-              action: 'concept-update',
-              'concept-id': conceptId
-            })
-          })
+          await indexCmrCollection({
+            Records: [{
+              body: JSON.stringify({
+                action: 'concept-update',
+                'concept-id': conceptId
+              })
+            }]
+          }, gremlinConnection)
+          // sqsEntries.push({
+          //   Id: conceptId,
+          //   MessageBody: JSON.stringify({
+          //     action: 'concept-update',
+          //     'concept-id': conceptId
+          //   })
+          // })
         })
 
-        const command = new SendMessageBatchCommand({
-          QueueUrl: process.env.COLLECTION_INDEXING_QUEUE_URL,
-          Entries: sqsEntries
-        })
+        // const command = new SendMessageBatchCommand({
+        //   QueueUrl: process.env.COLLECTION_INDEXING_QUEUE_URL,
+        //   Entries: sqsEntries
+        // })
 
-        await sqs.send(command)
+        // await sqs.send(command)
       })
     }
 
