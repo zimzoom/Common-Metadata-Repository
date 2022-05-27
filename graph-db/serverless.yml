@@ -47,6 +47,10 @@ functions:
               - CollectionIndexingQueue
               - Arn
 
+  indexGeneric:
+    timeout: 20
+    handler: serverless/src/indexGeneric/handler.default
+
 resources:
   Resources:
     CollectionIndexingQueue:
