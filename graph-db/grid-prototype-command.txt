@@ -1,0 +1,1 @@
+ npx sls invoke local --function indexGeneric --path grid.json

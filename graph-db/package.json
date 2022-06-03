@@ -38,6 +38,7 @@
     "axios": "^0.24.0",
     "gremlin": "^3.4.10",
     "lodash": "^4.17.21",
+    "node-jq": "^2.3.3",
     "serverless": "^3.18.0",
     "serverless-webpack": "^5.6.1",
     "webpack": "^5.39.0"
