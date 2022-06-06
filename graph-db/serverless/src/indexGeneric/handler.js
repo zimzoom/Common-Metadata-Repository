@@ -26,7 +26,7 @@ const indexGenerics = async (event) => {
     //    files used for other info
     const documentMetadata = event;
     const indexMetadata = require('../../../index.json');
-    const docConceptId = 'X00000001';
+    const docConceptId = 'X100000001-PROV1';
 
     // Parse data into doc type (label) & 2 arrays of objects -- one for the properties in this node,
     // and one for the properties in the other nodes including name of their relationship to this node
