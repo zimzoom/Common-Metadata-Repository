@@ -51,6 +51,10 @@ functions:
     timeout: 20
     handler: serverless/src/indexGeneric/handler.default
 
+  indexACL:
+    timeout: 20
+    handler: serverless/src/indexACL/handler.default
+
 resources:
   Resources:
     CollectionIndexingQueue:

@@ -1,0 +1,10 @@
+{
+	"group_permissions":
+	[{"permissions":["read"],"group_id":"1"},
+	 {"permissions":["read"],"group_id":"2"},
+	 {"permissions":["read","order"],"group_id":"3"}
+	],
+	"legacy_guid":"SOME-RANDOM-GUID-VALUE-LOOKS-LIKE-THIS-25575AA6-0102-74C5-2C24-CA800398E770"
+	,"catalog_item_identity":{"name":"MyGenACL","provider_id":"SOME_PROVIDER"}
+}
+
