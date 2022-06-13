@@ -10,14 +10,17 @@ const GraphPredicate = gremlin.process.P;
  */
 
 export const parsegraphQlQuery = async (documentMetadata, indexMetadata) => {
+    //Parse the Queries if key is empty string we still grab it; key must be in query
     const jq = require('node-jq');
     const label = documentMetadata.ConceptType;
     const id = documentMetadata.ConceptId;
     const relationship = documentMetadata.Relationship;
+    const userGroups = documentMetadata.userGroups; //string array containing groups
     return {
         'label': label,
         'id': id,
-        'relationship': relationship
+        'relationship': relationship,
+        'userGroups': userGroups,
     };
 }
 
@@ -82,23 +85,84 @@ export const getVertexesRelatedByEdge = async (gremlinConnection,vertexLabel,ver
 
 export const queryVertexesByExclusiveProperties = async (gremlinConnection,label,property,propertyValue) => {
 let node = null
+console.log("The property in the eclusive function is " + property);
 try {
         node = await gremlinConnection
         .V()
         .hasLabel(label)
-        .not(gremlinStatistics.has(property,'Some_Property').contains(propertyValue)) //Does NOT contain the a property with the value
-        .next()
+        .not(gremlinStatistics.has(property,propertyValue)) //Look for vertexes that do not have X prope
+        .toList()
     } catch (error) {
-        console.log(`Error searching for ${label} nodes in the graph [${property}]:`);
+        console.log(`Error searching for ${label} which does not have the vlaue: [${property}]:`);
         console.log(error);
         return false;
     }
+   //const valueMaps = []  = node;
+   const { value = {} } = node;
+   //const { id: nodeId } = value;
+   console.log("Here are the nodes that you were looking for " + Object.values(value)); //Right now this is going to return the list of vertexes that fit the query
+   
+   //console.log(`Node [${nodeId}] for [${label} - ${conceptId}] successfully searched for vertexes in the graph db.`);
+   return node;   
 }
+
+export const getConceptCount = async (gremlinConnection,label) => {
+let count = 0;
+try {
+        count = await gremlinConnection
+        .V()
+        .hasLabel(label)
+        .count() //Look for vertexes that do not have X prope
+        .next()
+    } catch (error) {
+        //console.log(`Error searching for ${label} which does not have the vlaue: [${property}]:`);
+        console.log(error);
+        return false;
+    }
+    console.log("There are " + count + " for " + label + " In the graph database");
+   //console.log(`Node [${nodeId}] for [${label} - ${conceptId}] successfully searched for vertexes in the graph db.`);
+   return count;   
+}
+
+export const queryVCountNumberOfAssociatedVertexes = async (gremlinConnection,label,conceptId,edgeLabel) => { //Given the concept Id find out how many vertexes are connected via some relationship
+    let count = 0;
+    try {
+            count = await gremlinConnection
+            .V()
+            .hasLabel(label)
+            .has('id',conceptId)
+            .out(edgeLabel) //Traverse out of an edge with this label to get the count gets list of vertexes
+            .count()
+            .next()
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    return count;
+}
+
+export const getSubgraph = async () => { //Note that subgraphs do NOT actually work on Javascript because it is not a JVM language this is a workaround by passing it as gremlin script
+    const client = new gremlin.driver.Client(
+    "ws://localhost:8182/gremlin",
+    {
+        traversalsource : "g"
+    }); //Connect to the server to send out a Gremlin Script to it
+    return client.submit("sg = g.E().subgraph('sg').cap('sg').next().traversal()", { }).then(function (result) { //issue groovy call
+        console.log("Result: %s\n", JSON.stringify(result));
+    });
+    /*return client.submit("sg = traversal().withEmbedded(subGraph)", { }).then(function (result) { //issue groovy call
+        console.log("Result: %s\n", JSON.stringify(result));
+    });*/
+    //client.close();
+    /*client.submit("sg.V()", { }).then(function (result) { //issue groovy call
+        console.log("Result: %s\n", JSON.stringify(result));
+    });*/
+
+}
+
+ //TODO: Some queries we can include
+//export const queryGetConceptStats = async (gremlinConnection,label,conceptId,edgeLabel) => {} // Get how many vertexes and edges of some type are there organized .by() some property
 //export const findRelatedEdgeBetweenVertexes = async (vertexID, edgeLabel) => {} //return the edge between two known vertexes
 //export const searchWithFitler = async (vertexID, edgeLabel) => {} //Use the filter and Serach.Prefix strategies to return nodes that start with X
 //export const getConceptCount = async (vertexID, edgeLabel) => {} //Return the number of concepts with that label
-// "who are my friends' friends?"
-//"where can I fly to from here with a maximum of two stops?" more generally how can I get from x to y with some constraints
-// Get the java code int the vertex and figure out any use cases for that
-// THere is a regex capability to GraphDB in gremlin which may be helpful build a query from that
-// unbounded recusrive traversals 'how is x and y connected' this means we don't know how many connections there are between us
+//export const returnSubgraph = async (vertexID, edgeLabel) => {} //Return a subgraph of the main graph that can then have work executed on it

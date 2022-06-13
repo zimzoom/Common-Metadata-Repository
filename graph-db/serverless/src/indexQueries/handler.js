@@ -3,7 +3,7 @@ import gremlin from 'gremlin'
 
 import { getEchoToken } from '../utils/cmr/getEchoToken'
 import { initializeGremlinConnection } from '../utils/gremlin/initializeGremlinConnection'
-import { queryConcepts, getVertexesRelatedByEdge,parsegraphQlQuery, queryVertexesByExclusiveProperties} from '../utils/cmr/genericQueries'
+import { queryConcepts, getVertexesRelatedByEdge,parsegraphQlQuery, queryVertexesByExclusiveProperties,getConceptCount,queryVCountNumberOfAssociatedVertexes, getSubgraph} from '../utils/cmr/genericQueries'
 
 let gremlinConnection
 let token
@@ -27,14 +27,28 @@ const indexQueries = async (event) => {
 
     // Parse the GraphQl query into sections that we can utilize by breaking down the .json into gremlin components
 
-    /*const { 'label': label,
-            'propertyFields': propertyFields,
-            'otherNodes': otherNodes } = await parsegraphQlQuery(documentMetadata, indexMetadata);*/
-
+    const { 'label': label,
+            'relationship': relationship,
+            'userGroups': userGroups,
+            'id':id 
+            } = await parsegraphQlQuery(documentMetadata, indexMetadata);
+    
     const returnedVertexes = await queryConcepts(gremlinConnection, "Grid",['1','2']); 
+    //const relatedVertex = await getVertexesRelatedByEdge(gremlinConnection,);
     //const exclusiveProperties = await queryVertexesByExclusiveProperties(gremlinConnection,'Grid','id','X100000001-PROV1') //Gremlin 3.4 does not support contains predicate step TODO refactor
+    
+    const conceptCount = await getConceptCount(gremlinConnection,'Grid') //Returns the count of the specified concept type i.e. how many instancs of these are there isn the gaph database
+
+    const conceptCountFromSpecifiedEdge = await queryVCountNumberOfAssociatedVertexes(gremlinConnection,'ACL','ACL-1234','Controls')
+
+    const subGraph = await getSubgraph();
+
     return {
-        returnedVertexes
+        //returnedVertexes,
+        //exclusiveProperties,
+        //conceptCount,
+        conceptCountFromSpecifiedEdge,
+        subGraph
     }
 
 }
