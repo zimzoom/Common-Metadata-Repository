@@ -22,24 +22,54 @@ export const parseGenericMetadata = async (documentMetadata, indexMetadata) => {
         .map( async index => {return {
             [index.Name]: await jq.run(index.Field, documentMetadata, { input: 'json', output: 'json' })
         }}));
+    // const otherNodes = await Promise.all(nodeIndexes
+    //     .map(async index => {
+    //         let nodeMetadata = await jq.run(index.Field, documentMetadata, { input: 'json', output: 'json' });
+    //         return {
+    //                     [index.Name]: {
+    //                         'nodeRelationship': index.Configuration.relationship,
+    //                         'nodeProperties': index.Configuration.properties
+    //                             .map( fieldKey => {return {
+    //                                 [fieldKey]: nodeMetadata[fieldKey]
+    //                             };})
+    //                     }
+    //                 };
+    //     }))
     const otherNodes = await Promise.all(nodeIndexes
         .map(async index => {
             let nodeMetadata = await jq.run(index.Field, documentMetadata, { input: 'json', output: 'json' });
-            return {
-                        [index.Name]: {
-                            'nodeRelationship': index.Configuration.relationship,
-                            'nodeProperties': index.Configuration.properties
-                                .map( fieldKey => {return {
-                                    [fieldKey]: nodeMetadata[fieldKey]
-                                };})
-                        }
-                    };
-    }))
+            // If this metadata field is an array of objects (producing multiple nodes), return an array of objects
+            if (Array.isArray(nodeMetadata)) {
+                return nodeMetadata.map( (metadataObj, i) => {
+                    return {
+                                [index.Name]: {
+                                    'nodeRelationship': index.Configuration.relationship,
+                                    'nodeProperties': index.Configuration.properties.map( fieldKey => {return {[fieldKey]: nodeMetadata[i][fieldKey]}})
+                                        }
+                            }
+                })
+            // If this metadata field is one object (producing one node), return one object
+            } else {
+                return {
+                            [index.Name]: {
+                                'nodeRelationship': index.Configuration.relationship,
+                                'nodeProperties': index.Configuration.properties
+                                    .map( fieldKey => {return {
+                                        [fieldKey]: nodeMetadata[fieldKey]
+                                    };})
+                            }
+                        };
+            }
+        }))
+
+    // Flattens out the list of nodes in case it includes arrays
+    // [ [obj1, obj2], obj3 ] ==> [ ob1, obj2, obj3 ]
+    const flatOtherNodes = otherNodes.flat()
 
     return {
         'label': label,
         'propertyFields': propertyFields,
-        'otherNodes': otherNodes
+        'otherNodes': flatOtherNodes
     };
 
     // OLD CODE THAT DIDN'T WAIT FOR ALL PROMISES -- BUT WHY. I STILL WANT TO KNOW

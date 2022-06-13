@@ -48,6 +48,17 @@
                 }
         },
         {
+            "Description": "Mock index for separate entity field",
+            "Field": ".RelatedURLs",
+            "Name": "URL",
+            "Type": "graph",
+            "Indexer": "separate-node",
+            "Configuration": {
+                "properties": ["URL", "URLContentType"],
+                "relationship": "RelatedTo"
+                }
+        },
+        {
             "Description": "Elastic index with a configuration",
             "Field": ".MetadataSpecification",
             "Name": "Metadata-Specification",
