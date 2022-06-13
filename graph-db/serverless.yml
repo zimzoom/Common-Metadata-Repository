@@ -54,6 +54,10 @@ functions:
   indexACL:
     timeout: 20
     handler: serverless/src/indexACL/handler.default
+    
+  indexQueries:
+    timeout: 20
+    handler: serverless/src/indexQueries/handler.default
 
 resources:
   Resources:
