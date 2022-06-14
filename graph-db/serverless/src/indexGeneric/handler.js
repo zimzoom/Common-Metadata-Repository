@@ -35,17 +35,17 @@ const indexGenerics = async (event) => {
             'otherNodes': otherNodes } = await parseGenericMetadata(documentMetadata, indexMetadata);
 
     // Insert the node for this generic document
-    //const genericDocNodeId = await insertGenericConceptNode(gremlinConnection, propertyFields, label, docConceptId);
+    const genericDocNodeId = await insertGenericConceptNode(gremlinConnection, propertyFields, label, docConceptId);
 
     // Iterate through the array for the properties that were indicated as needing to be their own node,
     // for each one, insert 1 node and 1 edge that connects that new node back to the generic document node
-    // const otherNodeIds = await Promise.all(otherNodes.map(async otherNodeObj => {
-    //     let otherNodeLabel = Object.keys(otherNodeObj)[0];
-    //     let otherNodeInfo = Object.values(otherNodeObj)[0];
-    //     let otherNodeId = await insertGenericSubNode(gremlinConnection, otherNodeInfo.nodeProperties, otherNodeLabel);
-    //     let edgeId = await insertGenericEdge(gremlinConnection, otherNodeId, genericDocNodeId, otherNodeInfo.nodeRelationship);
-    //     return {otherNodeId, edgeId};
-    // }))
+    const otherNodeIds = await Promise.all(otherNodes.map(async otherNodeObj => {
+        let otherNodeLabel = Object.keys(otherNodeObj)[0];
+        let otherNodeInfo = Object.values(otherNodeObj)[0];
+        let otherNodeId = await insertGenericSubNode(gremlinConnection, otherNodeInfo.nodeProperties, otherNodeLabel);
+        let edgeId = await insertGenericEdge(gremlinConnection, otherNodeId, genericDocNodeId, otherNodeInfo.nodeRelationship);
+        return {otherNodeId, edgeId};
+    }))
 
     // returning some extra info for debugging purposes, may need to remove in the future
     return {
