@@ -20,13 +20,15 @@ const indexGenerics = async (event) => {
         }
 
     // Local Prototype Mock Up --
-    // Placeholder for when message queue event will be parsed/processed
-    //    and search app will give this info.
-    // Passing in grid metadata directly in event for local demo,
-    //    files used for other info
-    const documentMetadata = event;
-    const indexMetadata = require('../../../grid_index.json');
-    const docConceptId = 'X100000001-PROV1';
+    // Placeholder due to local development. Mocking up:
+    // Message queue event will be parsed/processed for concept ID,
+    // which will be used to lookup metadata in search.
+    // Expects event json that is an array with 3 strings in this order:
+    // [ 'conceptID', 'documentMetadataFile.json', 'indexMetadataFile.json']
+    // those given files must be in the directory graph-db/local-mockup/
+    const docConceptId = event[0]
+    const documentMetadata = require(`../../../local-mockup/${event[1]}`)
+    const indexMetadata = require(`../../../local-mockup/${event[2]}`)
 
     // Parse data into doc type (label) & 2 arrays of objects -- one for the properties in this node,
     // and one for the properties in the other nodes including name of their relationship to this node

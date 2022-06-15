@@ -1,1 +1,1 @@
-npx sls invoke local --function indexGeneric --path grid.json
+npx sls invoke local --function indexGeneric --path local-mockup/grid-event.json
