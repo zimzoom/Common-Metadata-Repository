@@ -1,0 +1,6 @@
+{
+    "ConceptType": "Grid",
+    "ConceptId": "X100000001-PROV1",
+    "Relationship":"PublishedBy",
+    "userGroups": ["group1,group2"]
+}
