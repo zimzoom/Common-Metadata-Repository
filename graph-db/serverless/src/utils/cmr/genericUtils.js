@@ -22,88 +22,84 @@ export const parseGenericMetadata = async (documentMetadata, indexMetadata) => {
         .map( async index => {return {
             [index.Name]: await jq.run(index.Field, documentMetadata, { input: 'json', output: 'json' })
         }}));
-    // const otherNodes = await Promise.all(nodeIndexes
-    //     .map(async index => {
-    //         let nodeMetadata = await jq.run(index.Field, documentMetadata, { input: 'json', output: 'json' });
-    //         return {
-    //                     [index.Name]: {
-    //                         'nodeRelationship': index.Configuration.relationship,
-    //                         'nodeProperties': index.Configuration.properties
-    //                             .map( fieldKey => {return {
-    //                                 [fieldKey]: nodeMetadata[fieldKey]
-    //                             };})
-    //                     }
-    //                 };
-    //     }))
+
     const otherNodes = await Promise.all(nodeIndexes
         .map(async index => {
             let nodeMetadata = await jq.run(index.Field, documentMetadata, { input: 'json', output: 'json' });
+            if (nodeMetadata == null) {
+                return nodeMetadata;
+            }
             // If this metadata field is an array of objects (producing multiple nodes), return an array of objects
-            if (Array.isArray(nodeMetadata)) {
+            else if (Array.isArray(nodeMetadata)) {
                 return nodeMetadata.map( (metadataObj, i) => {
-                    return {
-                                [index.Name]: {
-                                    'nodeRelationship': index.Configuration.relationship,
-                                    'nodeProperties': index.Configuration.properties.map( fieldKey => {return {[fieldKey]: nodeMetadata[i][fieldKey]}})
-                                        }
-                            }
+                    return parseOtherNode(index.Name, index.Configuration, nodeMetadata[i]);
+                    // return {
+                    //             [index.Name]: {
+                    //                 'nodeRelationship': index.Configuration.relationship,
+                    //                 'nodeProperties': index.Configuration.properties.map( fieldKey => {return {[fieldKey]: nodeMetadata[i][fieldKey]}})
+                    //                     }
+                    //         }
                 })
             // If this metadata field is one object (producing one node), return one object
             } else {
-                return {
-                            [index.Name]: {
-                                'nodeRelationship': index.Configuration.relationship,
-                                'nodeProperties': index.Configuration.properties
-                                    .map( fieldKey => {return {
-                                        [fieldKey]: nodeMetadata[fieldKey]
-                                    };})
-                            }
-                        };
+                return parseOtherNode(index.Name, index.Configuration, nodeMetadata);
+                // return {
+                //             [index.Name]: {
+                //                 'nodeRelationship': index.Configuration.relationship,
+                //                 'nodeProperties': index.Configuration.properties
+                //                     .map( fieldKey => {return {
+                //                         [fieldKey]: nodeMetadata[fieldKey]
+                //                     };})
+                //             }
+                //         };
             }
         }))
 
-    // Flattens out the list of nodes in case it includes arrays
-    // [ [obj1, obj2], obj3 ] ==> [ ob1, obj2, obj3 ]
-    const flatOtherNodes = otherNodes.flat()
+    // Removes nulls, then flattens out the list of nodes in case it includes arrays
+    // [ [obj1, obj2], null, obj3 ] ==> [ ob1, obj2, obj3 ]
+    const cleanOtherNodes = otherNodes.filter(Boolean).flat();
+    // Remove nulls from property fields as well
+    const cleanPropertyFields = propertyFields.filter(Boolean);
 
     return {
         'label': label,
-        'propertyFields': propertyFields,
-        'otherNodes': flatOtherNodes
+        'propertyFields': cleanPropertyFields,
+        'otherNodes': cleanOtherNodes
     };
+}
 
-    // OLD CODE THAT DIDN'T WAIT FOR ALL PROMISES -- BUT WHY. I STILL WANT TO KNOW
-    //
-    // let propertyFields = new Map();
-    // let otherNodes = new Map();
-    //
-    // let result;
-    // indexes.filter( (index) => index.Type == 'graph').forEachAsync( (index) => {
-    //     if (index.Indexer == 'property') {
-    //         jq.run(index.Field, documentMetadata, { input: 'json', output: 'json' })
-    //             .then( (output) =>  {propertyFields.set(index.Name, output);
-    //                 console.log("property set");});
-    //     } else if (index.Indexer == 'separate-node') {
-    //         jq.run(index.Field, documentMetadata, { input: 'json', output: 'json' })
-    //             .then( (nodeMetadata) => {
-    //                 otherNodes.set(index.Name,
-    //                     {
-    //                         'nodeRelationship': index.Configuration.relationship,
-    //                         'nodeProperties': index.Configuration.properties.map( (fieldKey) =>
-    //                                             { return { [fieldKey]: nodeMetadata[fieldKey] }; })
-    //                     });
-    //                 console.log("node set");});
-    //     }})
-    //     .then(
-    //         result =  {
-    //             'label': label,
-    //             'propertyFields': propertyFields,
-    //             'otherNodes': otherNodes
-    //         }
-    //     );
-    //
-    //     return result;
-
+/**
+ * Helper function for parseGenericMetadata, specifically part of 'separate-node' Indexer.
+ * Given Name and Configuration from index metadata, return an object representing info needed to
+ * create a separate node. nodeRelationship & nodeRelationshipProperties will become the label and properties
+ * for the edge connecting this node to the generic document's node.
+ * @param {String} name The Name field from index item, will become node label
+ * @param {Object} configuration The Configuration field from index item. {"properties": [arr], "relationship": 'string', (optionally)"relationshipProperties": [arr]}
+ * @param {Object} metadataObj The object returned by jq selection from document metadata representing the entity to become a separate node
+ * @returns {Object.<string, Object>}
+ */
+const parseOtherNode = (name, configuration, metadataObj) => {
+    return {
+                [name]: {
+                        'nodeRelationship': configuration.relationship,
+                        'nodeProperties': configuration.properties
+                                            .map( fieldKey => {
+                                                return {
+                                                        [fieldKey]: metadataObj[fieldKey]
+                                                        };
+                                            } ),
+                        // Add this object attribute only if relationshipProperties exists
+                        ...(configuration.relationshipProperties &&
+                            {
+                                'nodeRelationshipProperties': configuration.relationshipProperties
+                                                                .map( fieldKey => {
+                                                                    return {
+                                                                            [fieldKey]: metadataObj[fieldKey]
+                                                                            };
+                                                                } )
+                            })
+                        }
+            };
 }
 
 /**
@@ -197,15 +193,23 @@ export const parseGenericMetadata = async (documentMetadata, indexMetadata) => {
  * @param {string} label label for the new edge
  * @returns {number}
  */
- export const insertGenericEdge = async (gremlinConnection, nodeId1, nodeId2, label) => {
+ export const insertGenericEdge = async (gremlinConnection, nodeId1, nodeId2, label, propertiesMap=null) => {
     let newEdge = null;
     try {
+        // Build the add edge command dynamically
+        const addECommand = gremlinConnection.addE(label);
+        if (propertiesMap) {
+            propertiesMap.forEach( propObj => {
+                addECommand.property(Object.keys(propObj)[0], Object.values(propObj)[0]);
+            })
+        }
+
         newEdge = await gremlinConnection
         .V(nodeId1).as('c')
         .V(nodeId2)
         .coalesce(
           gremlinStatistics.outE(label).where(gremlinStatistics.inV().as('c')),
-          gremlinConnection.addE(label).to('c')
+          addECommand.to('c')
         )
         .next()
     } catch (error) {
@@ -216,6 +220,6 @@ export const parseGenericMetadata = async (documentMetadata, indexMetadata) => {
     const { value = {} } = newEdge;
     const { id: edgeId } = value;
 
-    console.log(`New edge [${label}] inserted from node [${nodeId2}] to node [${nodeId1}]`);
+    console.log(`New edge [${label}][${edgeId}] inserted from node [${nodeId2}] to node [${nodeId1}]`);
     return edgeId;
 }

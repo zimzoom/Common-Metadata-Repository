@@ -8,7 +8,7 @@ import { parseGenericMetadata, insertGenericConceptNode, insertGenericSubNode, i
 let gremlinConnection
 let token
 
-const indexGenerics = async (event) => {
+const indexGenerics = async (event=["X100000022-PROV1", "sample-var.json", "var_index.json"]) => {
     // Prevent creating more tokens than necessary
     if (token === undefined) {
         token = await getEchoToken()
@@ -45,7 +45,11 @@ const indexGenerics = async (event) => {
         let otherNodeLabel = Object.keys(otherNodeObj)[0];
         let otherNodeInfo = Object.values(otherNodeObj)[0];
         let otherNodeId = await insertGenericSubNode(gremlinConnection, otherNodeInfo.nodeProperties, otherNodeLabel);
-        let edgeId = await insertGenericEdge(gremlinConnection, otherNodeId, genericDocNodeId, otherNodeInfo.nodeRelationship);
+        // Call this function with extra argument only if nodeRelationshipProperties exists
+        let edgeId =  await insertGenericEdge.apply(this, (otherNodeInfo.nodeRelationshipProperties ?
+            [gremlinConnection, otherNodeId, genericDocNodeId, otherNodeInfo.nodeRelationship, otherNodeInfo.nodeRelationshipProperties]
+            : [gremlinConnection, otherNodeId, genericDocNodeId, otherNodeInfo.nodeRelationship]));
+        //let edgeId = await insertGenericEdge(gremlinConnection, otherNodeId, genericDocNodeId, otherNodeInfo.nodeRelationship);
         return {otherNodeId, edgeId};
     }))
 

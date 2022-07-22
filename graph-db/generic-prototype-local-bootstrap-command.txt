@@ -1,0 +1,1 @@
+npx sls invoke local --function bootstrapGenerics --path local-mockup/var-bootstrap-event.json
