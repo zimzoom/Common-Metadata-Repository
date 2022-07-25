@@ -1,0 +1,101 @@
+{
+    "MetadataSpecification": {
+        "URL": "https://cdn.earthdata.nasa.gov/generic/index/v0.0.1",
+        "Name": "Generic-Index",
+        "Version": "0.0.1"
+    },
+    "Indexes":
+    [
+        {
+            "Description": "Mock index for property field",
+            "Field": ".VariableType",
+            "Name": "VariableType",
+            "Type": "graph",
+            "Indexer": "property"
+        },
+        {
+            "Description": "Mock index for property field",
+            "Field": ".StandardName",
+            "Name": "StandardName",
+            "Type": "graph",
+            "Indexer": "property"
+        },
+        {
+            "Description": "Mock index for property field",
+            "Field": ".DataType",
+            "Name": "DataType",
+            "Type": "graph",
+            "Indexer": "property"
+        },
+        {
+            "Description": "Mock index for property field",
+            "Field": ".Units",
+            "Name": "Units",
+            "Type": "graph",
+            "Indexer": "property"
+        },
+        {
+            "Description": "Mock index for property field",
+            "Field": ".ValidRanges[0].Min",
+            "Name": "Min",
+            "Type": "graph",
+            "Indexer": "property"
+        },
+        {
+            "Description": "Mock index for property field",
+            "Field": ".ValidRanges[0].Max",
+            "Name": "Max",
+            "Type": "graph",
+            "Indexer": "property"
+        },
+        {
+            "Description": "Mock index for property field",
+            "Field": ".Definition",
+            "Name": "Definition",
+            "Type": "graph",
+            "Indexer": "property"
+        },
+        {
+            "Description": "Mock index for separate entity field",
+            "Field": ".Dimensions",
+            "Name": "Dimension",
+            "Type": "graph",
+            "Indexer": "separate-node",
+            "Configuration": {
+                "properties": ["Name", "Size", "Type"],
+                "relationship": "DefinedIn"
+                }
+        },
+        {
+            "Description": "Mock index for separate entity field",
+            "Field": ".FillValues",
+            "Name": "FillValue",
+            "Type": "graph",
+            "Indexer": "separate-node",
+            "Configuration": {
+                "properties": ["Value", "Type"],
+                "relationship": "FilledBy"
+                }
+        },
+        {
+            "Description": "Mock index for separate entity field",
+            "Field": ".Sets",
+            "Name": "Set",
+            "Type": "graph",
+            "Indexer": "separate-node",
+            "Configuration": {
+                "properties": ["Name", "Type", "Size"],
+                "relationship": "PartOf",
+                "relationshipProperties": ["Index"]
+                }
+        },
+        {
+            "Description": "Elastic index with a configuration",
+            "Field": ".MetadataSpecification",
+            "Name": "Metadata-Specification",
+            "Indexer": "complex-field",
+            "Type": "elastic",
+            "Configuration": {"sub-fields": ["Name", "Version"]}
+        }
+    ]
+}
