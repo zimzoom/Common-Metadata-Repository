@@ -78,6 +78,7 @@
   "Prepares a document to be ingested so that search can retrieve the contents.
    Throws exceptions if something goes wrong, returns a map otherwise."
   [request]
+  (def reqt request)
   (let [{:keys [route-params request-context headers params]} request
         provider-id (or (:provider params)
                         (:provider-id route-params))
