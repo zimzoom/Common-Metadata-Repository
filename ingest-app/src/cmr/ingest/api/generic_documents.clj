@@ -64,6 +64,7 @@
   "Prepares a document to be ingested so that search can retrieve the contents.
    Throws exceptions if something goes wrong, returns a map otherwise."
   [request]
+  (def req2 request)
   (let [{:keys [route-params request-context headers params]} request
         provider-id (or (:provider params)
                         (:provider-id route-params))
@@ -74,7 +75,7 @@
         _ (acl/verify-ingest-management-permission
            request-context :update :provider-object provider-id)
         raw-document (slurp (:body request))
-        document (json/parse-string raw-document true)
+        document #spy/p (json/parse-string raw-document true)
         specification (:MetadataSpecification document)
         spec-key (keyword (string/lower-case (:Name specification)))
         spec-version (:Version specification)]
@@ -94,6 +95,24 @@
        :provider-id provider-id
        :native-id native-id
        :request-context request-context})))
+
+(comment
+  (let [{:keys [route-params request-context headers params]} req2
+        provider-id (or (:provider params)
+                        (:provider-id route-params))
+        native-id (:native-id route-params)
+        concept-type (keyword (:concept-type route-params))
+        _ (lt-validation/validate-launchpad-token request-context)
+        _ (api-core/verify-provider-exists request-context provider-id)
+        _ (acl/verify-ingest-management-permission
+           request-context :update :provider-object provider-id)
+        raw-document (slurp (:body req2))
+        document #spy/p (json/parse-string raw-document true)
+        specification (:MetadataSpecification document)
+        spec-key (keyword (string/lower-case (:Name specification)))
+        spec-version (:Version specification)]
+    (println concept-type))
+  )
 
 (defn validate-document-against-schema
   "This function will validate the passed in document with its schema and throw a
@@ -146,13 +165,24 @@
    * failed validation rules (external) (pending)
    * Document name not unique"
   [request]
+  (def req1 request)
   (let [res (prepare-generic-document request)
         headers (:headers request)
         {:keys [spec-key spec-version provider-id native-id request-context concept]} res
         metadata (:metadata concept)
-        metadata-json (json/generate-string concept)]
+        metadata-json #spy/p (json/generate-string concept)]
+    (def conc0 concept)
     (validate-document-against-schema spec-key spec-version metadata)
     (ingest-document request-context concept headers)))
+
+(comment
+  (let [res (prepare-generic-document req1)
+        headers (:headers req1)
+        {:keys [spec-key spec-version provider-id native-id request-context concept]} res
+        metadata (:metadata concept)
+        metadata-json (json/generate-string concept)] 
+    (println concept))
+  )
 
 (defn read-generic-document
   "Read a document from the Native ID and return that document"
@@ -191,6 +221,7 @@
   "This function checks for required parameters. If they don't exist then throw an error, otherwise send the request
    on to the corresponding function."
   [request funct-str]
+  (def req0 request)
   (validate-any-required-query-parameters request required-query-parameters)
   (case funct-str
     :create (create-generic-document request)
