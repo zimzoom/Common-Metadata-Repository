@@ -1,4 +1,4 @@
-# DataQualitySummary schema change Log
+# Data-Quality-Summary schema change Log
 
 ## [1.0.0]
 - 2022-??-??

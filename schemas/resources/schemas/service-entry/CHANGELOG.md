@@ -1,4 +1,4 @@
-# ServiceEntry schema change Log
+# Service-Entry schema change Log
 
 ## [1.0.0]
 - 2022-??-??

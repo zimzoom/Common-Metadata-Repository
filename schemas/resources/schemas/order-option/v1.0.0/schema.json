@@ -54,7 +54,7 @@
         "URL": {
           "description": "This element represents the URL where the schema lives. The schema can be downloaded.",
           "type": "string",
-          "enum": ["https://cdn.earthdata.nasa.gov/generics/orderoption/v1.0.0"]
+          "enum": ["https://cdn.earthdata.nasa.gov/generics/order-option/v1.0.0"]
         },
         "Name": {
           "description": "This element represents the name of the schema.",

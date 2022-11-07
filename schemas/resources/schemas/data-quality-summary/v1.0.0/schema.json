@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "DataQualitySummary",
+  "title": "Data-Quality-Summary",
   "description": "Contains a human readable description of the quality of a set of data.",
   "additionalProperties": false,
   "type": "object",
@@ -33,12 +33,12 @@
         "URL": {
           "description": "This element represents the URL where the schema lives. The schema can be downloaded.",
           "type": "string",
-          "enum": ["https://cdn.earthdata.nasa.gov/generics/dataqualitysummary/v1.0.0"]
+          "enum": ["https://cdn.earthdata.nasa.gov/generics/data-quality-summary/v1.0.0"]
         },
         "Name": {
           "description": "This element represents the name of the schema.",
           "type": "string",
-          "enum": ["DataQualitySummary"]
+          "enum": ["Data-Quality-Summary"]
         },
         "Version": {
           "description": "This element represents the version of the schema.",

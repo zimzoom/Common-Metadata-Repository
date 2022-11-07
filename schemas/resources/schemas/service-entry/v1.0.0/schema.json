@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "ServiceEntry",
+  "title": "Service-Entry",
   "description": "This schema describes the information needed to describe a service provided by a data provider.",
   "additionalProperties": false,
   "type": "object",
@@ -47,7 +47,7 @@
     }
   },
   "required": ["Name", "Description", "URL", "Type", "InterfaceName", "MetadataSpecification"],
-  
+
   "definitions": {
     "MetadataSpecificationType": {
       "type": "object",
@@ -57,12 +57,12 @@
         "URL": {
           "description": "This element represents the URL where the schema lives. The schema can be downloaded.",
           "type": "string",
-          "enum": ["https://cdn.earthdata.nasa.gov/generics/serviceentry/v1.0.0"]
+          "enum": ["https://cdn.earthdata.nasa.gov/generics/service-entry/v1.0.0"]
         },
         "Name": {
           "description": "This element represents the name of the schema.",
           "type": "string",
-          "enum": ["ServiceEntry"]
+          "enum": ["Service-Entry"]
         },
         "Version": {
           "description": "This element represents the version of the schema.",

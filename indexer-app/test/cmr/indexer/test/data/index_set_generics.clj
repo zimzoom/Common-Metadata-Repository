@@ -5,7 +5,7 @@
 
 (def index-definition-def
   {:MetadataSpecification
-   {:URL "https://cdn.earthdata.nasa.gov/generics/dataqualitysummary/v1.0.0"
+   {:URL "https://cdn.earthdata.nasa.gov/generics/data-quality-summary/v1.0.0"
     :Name "DataQuailtySummary",
     :Version "1.0.0"}
    :SubConceptType "DQS",
