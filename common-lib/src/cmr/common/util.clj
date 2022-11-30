@@ -1067,3 +1067,10 @@
   (if (string? s)
     (read-string s)
     s))
+
+(defn str->int 
+  "If the string can be converted to a number, return that number, otherwise return nil."
+  [s] 
+  (if (number? (safe-read-string s))
+    (safe-read-string s)
+    nil))

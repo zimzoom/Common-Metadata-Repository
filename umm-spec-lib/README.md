@@ -116,7 +116,7 @@ Update the `src/cmr/umm_spec/migration/version/<concept>.clj` file. Add new func
 
 ### 5. Update Tests
 
-Add tests for the new migrations in `test/cmr/umm_spec/migration/version_migration.clj`
+Add tests for the new migrations in `test/cmr/umm_spec/test/migration/version/`
 
 Create or update any other tests needed and update the collection in `src/cmr/umm_spec/test/expected_conversion.clj` to make sure the collection tests your changes.
 

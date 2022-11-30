@@ -4,7 +4,7 @@
    [clojure.set :as set]
    [clojure.string :as string]
    [cmr.common-app.services.kms-fetcher :as kf]
-   [cmr.common.util :as util :refer [update-in-each remove-nil-keys]]
+   [cmr.common.util :as util :refer [update-in-each remove-nil-keys str->int]]
    [cmr.umm-spec.location-keywords :as lk]
    [cmr.umm-spec.metadata-specification :as m-spec]
    [cmr.umm-spec.migration.collection-progress-migration :as coll-progress-migration]
@@ -643,3 +643,53 @@
       (util/update-in-all [:UseConstraints :LicenseURL] migrate-mimetype-down)
       (util/update-in-all [:CollectionCitations :OnlineResource] migrate-mimetype-down)
       (util/update-in-all [:PublicationReferences :OnlineResource] migrate-mimetype-down)))
+
+(defmethod interface/migrate-umm-version [:collection "1.17.1" "1.17.2"]
+  [context collection & _]
+  ;; Migrate TilingIdentificationSystems/Coordinate1 and Coordinate2 from number to string
+  (-> collection
+      (m-spec/update-version :collection "1.17.2")
+      (util/update-in-all [:TilingIdentificationSystems :Coordinate1 :MinimumValue] str)
+      (util/update-in-all [:TilingIdentificationSystems :Coordinate1 :MaximumValue] str)
+      (util/update-in-all [:TilingIdentificationSystems :Coordinate2 :MinimumValue] str)
+      (util/update-in-all [:TilingIdentificationSystems :Coordinate2 :MaximumValue] str)))
+
+(defmethod interface/migrate-umm-version [:collection "1.17.2" "1.17.1"]
+  [context collection & _]
+  ;; Remove the EULAIdentifier field in UseConstraints.
+  ;; Migrate TilingIdentificationSystems/Coordinate1 and Coordinate2 down if they are numbers, otherwise remove
+  (-> collection
+      (m-spec/update-version :collection "1.17.1") 
+      (update-in [:UseConstraints] dissoc :EULAIdentifier)
+      (util/update-in-all [:TilingIdentificationSystems :Coordinate1 :MinimumValue] str->int)
+      (util/update-in-all [:TilingIdentificationSystems :Coordinate1 :MaximumValue] str->int)
+      (util/update-in-all [:TilingIdentificationSystems :Coordinate2 :MinimumValue] str->int)
+      (util/update-in-all [:TilingIdentificationSystems :Coordinate2 :MaximumValue] str->int)))
+
+(comment 
+  (update-in {:UseConstraints {:EULAIdentifier "EULA-1"}}
+             [:UseConstraints] dissoc :EULAIdentifier)
+  
+  (def tile-coll {:TilingIdentificationSystems [{:TilingIdentificationSystemName "MODIS Tile EASE",
+                                                 :Coordinate1 {:MinimumValue -100,
+                                                               :MaximumValue -50},
+                                                 :Coordinate2 {:MinimumValue 50,
+                                                               :MaximumValue 100}}
+                                                {:TilingIdentificationSystemName "MISR"
+                                                 :Coordinate1 {:MinimumValue 1.0
+                                                               :MaximumValue 10.0}
+                                                 :Coordinate2 {:MinimumValue 1.5
+                                                               :MaximumValue 10.5}}]})
+  (update-in tile-coll
+             [:TilingIdentificationSystems 1 :Coordinate1 :MinimumValue] inc)
+  
+  (defn testfn 
+    (map #()))
+  
+  (->> (:TilingIdentificationSystem tile-coll)
+       (remove #(= "Military Grid Reference System" (:TilingIdentificationSystemName %)))
+       seq)
+  
+  (util/update-in-all tile-coll [:TilingIdentificationSystems :Coordinate1 :MinimumValue] str)
+  (update-in-each tile-coll [:TilingIdentificationSystems] #(println (:Coordinate1 %)))
+  )
