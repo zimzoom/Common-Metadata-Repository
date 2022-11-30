@@ -4,7 +4,7 @@
    [clojure.set :as set]
    [clojure.string :as string]
    [cmr.common-app.services.kms-fetcher :as kf]
-   [cmr.common.util :as util :refer [update-in-each remove-nil-keys]]
+   [cmr.common.util :as util :refer [update-in-each remove-nil-keys str->num]]
    [cmr.umm-spec.location-keywords :as lk]
    [cmr.umm-spec.metadata-specification :as m-spec]
    [cmr.umm-spec.migration.collection-progress-migration :as coll-progress-migration]
@@ -643,3 +643,27 @@
       (util/update-in-all [:UseConstraints :LicenseURL] migrate-mimetype-down)
       (util/update-in-all [:CollectionCitations :OnlineResource] migrate-mimetype-down)
       (util/update-in-all [:PublicationReferences :OnlineResource] migrate-mimetype-down)))
+
+(defmethod interface/migrate-umm-version [:collection "1.17.1" "1.17.2"]
+  [context collection & _]
+  ;; Migrate TilingIdentificationSystems/Coordinate1 and Coordinate2 from number to string
+  (-> collection
+      (m-spec/update-version :collection "1.17.2")
+      (util/update-in-all [:TilingIdentificationSystems :Coordinate1 :MinimumValue] str)
+      (util/update-in-all [:TilingIdentificationSystems :Coordinate1 :MaximumValue] str)
+      (util/update-in-all [:TilingIdentificationSystems :Coordinate2 :MinimumValue] str)
+      (util/update-in-all [:TilingIdentificationSystems :Coordinate2 :MaximumValue] str)))
+
+(defmethod interface/migrate-umm-version [:collection "1.17.2" "1.17.1"]
+  [context collection & _]
+  ;; Remove the EULAIdentifiers field in UseConstraints.
+  ;; Migrate TilingIdentificationSystems/Coordinate1 and Coordinate2 down if they are numbers, otherwise remove
+  (-> collection
+      (m-spec/update-version :collection "1.17.1") 
+      (as-> coll (if (seq (get-in coll [:UseConstraints :EULAIdentifiers]))
+                   (update-in coll [:UseConstraints] dissoc :EULAIdentifiers)
+                   coll))
+      (util/update-in-all [:TilingIdentificationSystems :Coordinate1 :MinimumValue] str->num)
+      (util/update-in-all [:TilingIdentificationSystems :Coordinate1 :MaximumValue] str->num)
+      (util/update-in-all [:TilingIdentificationSystems :Coordinate2 :MinimumValue] str->num)
+      (util/update-in-all [:TilingIdentificationSystems :Coordinate2 :MaximumValue] str->num)))
