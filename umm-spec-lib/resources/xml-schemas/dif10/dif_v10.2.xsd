@@ -1158,8 +1158,8 @@ History:
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="Minimum_Value" minOccurs="0" type="xs:string"/>
-            <xs:element name="Maximum_Value" minOccurs="0" type="xs:string"/>
+            <xs:element name="Minimum_Value" minOccurs="0" type="xs:decimal"/>
+            <xs:element name="Maximum_Value" minOccurs="0" type="xs:decimal"/>
         </xs:sequence>
     </xs:complexType>
 
