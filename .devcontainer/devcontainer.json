@@ -1,0 +1,10 @@
+{
+	"name": "cmr-dev-container",
+	"build": {
+	  "dockerfile": "Dockerfile"
+	},
+	"settings": {
+	  "terminal.integrated.shell.linux": "/bin/zsh",
+	  "editor.tabSize": 4
+	}
+  }
