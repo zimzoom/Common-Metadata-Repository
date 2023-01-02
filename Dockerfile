@@ -38,4 +38,5 @@ RUN apt-get clean
 COPY . /cmr
 WORKDIR /cmr
 #CMD ["/bin/cmr" "setup" "dev"]
+RUN /bin/bash -c './bin/cmr install oracle-libs'
 RUN /bin/bash -c './bin/cmr setup dev'
