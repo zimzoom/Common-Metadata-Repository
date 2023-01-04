@@ -39,4 +39,7 @@ COPY . /cmr
 WORKDIR /cmr
 #CMD ["/bin/cmr" "setup" "dev"]
 RUN /bin/bash -c './bin/cmr install oracle-libs'
-RUN /bin/bash -c './bin/cmr setup dev'
+RUN /bin/bash -c './bin/cmr setup dev' 
+# cmr-test-1 ends here
+# ENTRYPOINT [ "bin/cmr", "start", "repl" ]
+# CMD [ "sleep", "infinity" ]
