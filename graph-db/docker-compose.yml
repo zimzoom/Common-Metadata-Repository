@@ -1,0 +1,11 @@
+version: "3"
+services:
+  sqs:
+    image: softwaremill/elasticmq:latest
+    ports:
+      - "9324:9324"
+      - "9325:9325"
+  graphdb:
+    image: tinkerpop/gremlin-server
+    ports:
+      - "8182:8182"

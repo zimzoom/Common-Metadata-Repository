@@ -10,7 +10,10 @@
     "test:watch": "jest -i --watchAll",
     "test-coverage": "jest --coverage",
     "ci-test": "jest -i --reporters=\"default\" --reporters=\"jest-junit\"",
-    "deploy": "./node_modules/.bin/sls deploy --config serverless.yml"
+    "deploy": "./node_modules/.bin/sls deploy --config serverless.yml",
+    "prestart": "npm run start:queue",
+    "start:queue": "docker-compose up -d",
+    "stop:queue": "docker-compose down"
   },
   "maintainers": [
     {
@@ -40,6 +43,7 @@
     "lodash": "^4.17.21",
     "serverless": "^3.24.1",
     "serverless-offline": "^12.0.4",
+    "serverless-offline-sqs": "^7.3.2",
     "serverless-webpack": "^5.9.0",
     "webpack": "^5.73.0",
     "webpack-node-externals": "^3.0.0"

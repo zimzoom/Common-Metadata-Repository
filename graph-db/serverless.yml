@@ -13,10 +13,10 @@ provider:
    name: graphdb-driver-deployment-bucket-${self:provider.stage}
    skipPolicySetup: true
 
-  vpc:
-    securityGroupIds:
-      - ${cf:${self:provider.stage}.servicesSecurityGroupId}
-    subnetIds: !Split [',', '${cf:${self:provider.stage}.subnetIds}']
+  # vpc:
+  #   securityGroupIds:
+  #     - ${cf:${self:provider.stage}.servicesSecurityGroupId}
+  #   subnetIds: !Split [',', '${cf:${self:provider.stage}.subnetIds}']
 
   environment:
     CMR_ROOT: ${self:custom.variables.CMR_ROOT}
@@ -30,6 +30,7 @@ provider:
 configValidationMode: error
 plugins:
   - serverless-offline
+  - serverless-offline-sqs
   - serverless-webpack
 
 functions:
@@ -53,6 +54,7 @@ resources:
     CollectionIndexingQueue:
       Type: 'AWS::SQS::Queue'
       Properties:
+        QueueName: graph-db-CollectionIndexingQueue
         VisibilityTimeout: 300
         DelaySeconds: 5
         RedrivePolicy:
@@ -168,4 +170,14 @@ custom:
     includeModules: true
     packager: 'npm'
     excludeFiles: src/**/*.test.js
+
+  serverless-offline-sqs:
+    autoCreate: true                 # create queue if not exists
+    apiVersion: '2012-11-05'
+    endpoint: http://0.0.0.0:9324
+    region: ${self:provider.region}
+    # TODO why does cmr ordering have these next two lines commented out?
+    accessKeyId: root
+    secretAccessKey: root
+    skipCacheInvalidation: false
     

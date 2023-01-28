@@ -23,7 +23,8 @@ export const initializeGremlinConnection = () => {
     return connection
   }
 
-  const gremlinUrl = process.env.GREMLIN_URL
+  // const gremlinUrl = process.env.GREMLIN_URL
+  const gremlinUrl = process.env.IS_LOCAL ? 'ws://localhost:8182/gremlin' : process.env.GREMLIN_URL
 
   driverRC = new DriverRemoteConnection(gremlinUrl, {})
 
