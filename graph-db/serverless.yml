@@ -29,9 +29,9 @@ provider:
 
 configValidationMode: error
 plugins:
-  - serverless-offline
   - serverless-offline-sqs
   - serverless-webpack
+  - serverless-offline
 
 functions:
   bootstrapGremlinServer:
